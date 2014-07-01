@@ -23,7 +23,12 @@ input, textarea {
 }
 
 h1,h2,h3,h4,h5,h6 {
-    margin: 0;
+    .font-weight(bold);
+    margin: 1.25em 0 .5em 0;
+    text-transform: uppercase;
+    a, a:hover {
+        text-decoration: none;
+    }
 }
 
 p {
@@ -31,21 +36,15 @@ p {
 }
 
 h1, .h1 {
-    .font-size(48, 48);
-    .font-weight(light);
-    letter-spacing: 0em;
+    .font-size(28, 28);
 }
 
 h2, .h2 {
-    .font-size(30, 30);
-    .font-weight(semibold);
-    margin-bottom: 2.4rem;
+    .font-size(24, 24);
 }
 
 h3, .h3 {
     .font-size(21, 21);
-    .font-weight(bold);
-    margin-bottom: .9rem;
 }
 
 h4, .h4 {

@@ -1,0 +1,172 @@
+<!--(bake partials/_header.html body-class="index")-->
+
+<section id="main-content" class="theme-light post-detail">
+
+    <article class="post">
+
+        <header class="post-header">
+            <h1 class="post-title"><a href="#">Welcome to Ghost</a></h1>
+            <hr>
+            <div class="post-meta">
+                <div class="post-meta-data"><i class="fa fa-clock-o"></i> 4 months ago</div>
+                <!--<div class="post-meta-data"><i class="icon-shortlink"></i> <a href="#">BIT.LY/1ES1TCF</a></div>-->
+                <div class="post-meta-data"><i class="fa fa-tags"></i> Getting Started</div>
+            </div>
+        </header>
+
+        <div class="post-content">
+            <p>You're live! Nice. We've put together a little post to introduce you to the Ghost editor and get you
+                started. You can manage your content by signing in to the admin area at <code>&lt;your blog URL&gt;/ghost/</code>.
+                When you arrive, you can select this post from a list on the left and see a preview of it on the right.
+                Click the little pencil icon at the top of the preview to edit this post and read the next section!</p>
+
+            <h2 id="gettingstarted">Getting Started</h2>
+
+            <p>Ghost uses something called Markdown for writing. Essentially, it's a shorthand way to manage your post
+                formatting as you write!</p>
+
+            <p>Writing in Markdown is really easy. In the left hand panel of Ghost, you simply write as you normally
+                would. Where appropriate, you can use <em>shortcuts</em> to <strong>style</strong> your content. For
+                example, a list:</p>
+
+            <ul>
+                <li>Item number one</li>
+                <li>Item number two
+                    <ul>
+                        <li>A nested item</li>
+                    </ul>
+                </li>
+                <li>A final item</li>
+            </ul>
+
+            <p>or with numbers!</p>
+
+            <ol>
+                <li>Remember to buy some milk</li>
+                <li>Drink the milk</li>
+                <li>Tweet that I remembered to buy the milk, and drank it</li>
+            </ol>
+
+            <h3 id="links">Links</h3>
+
+            <p>Want to link to a source? No problem. If you paste in url, like <a href="http://ghost.org">http://ghost.org</a>
+                - it'll automatically be linked up. But if you want to customise your anchor text, you can do that too!
+                Here's a link to <a href="http://ghost.org">the Ghost website</a>. Neat.</p>
+
+            <h3 id="whataboutimages">What about Images?</h3>
+
+            <p>Images work too! Already know the URL of the image you want to include in your article? Simply paste it
+                in like this to make it show up:</p>
+
+            <p><img src="https://ghost.org/images/ghost.png" alt="The Ghost Logo"></p>
+
+            <p>Not sure which image you want to use yet? That's ok too. Leave yourself a descriptive placeholder and
+                keep writing. Come back later and drag and drop the image in to upload:</p>
+
+            <h3 id="quoting">Quoting</h3>
+
+            <p>Sometimes a link isn't enough, you want to quote someone on what they've said. It was probably very
+                wisdomous. Is wisdomous a word? Find out in a future release when we introduce spellcheck! For now -
+                it's definitely a word.</p>
+
+            <blockquote>
+                Wisdomous - it's definitely a word.
+            </blockquote>
+
+            <h3 id="workingwithcode">Working with Code</h3>
+
+            <p>Got a streak of geek? We've got you covered there, too. You can write inline <code>&lt;code&gt;</code>
+                blocks really easily with back ticks. Want to show off something more comprehensive? 4 spaces of
+                indentation gets you there.</p>
+
+            <pre><code>.awesome-thing {
+    display: block;
+    width: 100%;
+}</code></pre>
+
+            <h3 id="readyforabreak">Ready for a Break?</h3>
+
+            <p>Throw 3 or more dashes down on any new line and you've got yourself a fancy new divider. Aw yeah.</p>
+
+        </div>
+
+
+
+        <div class="post-footer">
+
+            <hr>
+
+            <div class="section">
+                <h4><i class="fa fa-fw fa-chevron-circle-right"></i> Up Next</h4>
+                <ul>
+                    <li><a href="post.html">This is the Next Post in the List</a></li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h4><i class="fa fa-fw fa-history"></i> Related Posts</h4>
+                <ul>
+                    <li><a href="post.html">Some sort of post here</a></li>
+                    <li><a href="post.html">Another post that's related</a></li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h4><i class="fa fa-fw fa-tags"></i> Tagged</h4>
+                <ul>
+                    <li><a href="#">Hardware</a>, <a href="#">Spark Core</a>, <a href="#">Photos</a></li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h4><i class="fa fa-fw fa-calendar"></i> Posted on June 30th, 2014</h4>
+                <p><i class="fa fa-fw fa-user"></i> by <a href="http://crstffr.github.io">Christopher Mason</a></p>
+            </div>
+
+            <hr>
+
+            <div class="section">
+
+                <!--
+                <h4>Comments</h4>
+                <a href="#disqus_thread" class="btn btn-lg js-show-comments">Show Comments</a>
+
+                <script type="text/javascript">
+                    var disqus_shortname = 'smartamp';
+                    (function() {
+                        var s = document.createElement('script');
+                        s.async = true;
+                        s.type = 'text/javascript';
+                        s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+                        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+                    }());
+                </script>
+
+                -->
+
+                <div id="disqus_thread"></div>
+                <script type="text/javascript">
+                    var disqus_shortname = 'smartamp';
+                    (function() {
+                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                    })();
+                </script>
+
+
+            </div>
+
+
+
+        </div>
+
+    </article>
+
+
+
+
+
+</section>
+
+<!--(bake partials/_footer.html)-->

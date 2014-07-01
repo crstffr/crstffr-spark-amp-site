@@ -28,28 +28,40 @@ h3,
 h4,
 h5,
 h6 {
-  margin: 0;
+  font-weight: 700;
+  margin: 1.25em 0 .5em 0;
+  text-transform: uppercase;
+}
+h1 a,
+h2 a,
+h3 a,
+h4 a,
+h5 a,
+h6 a,
+h1 a:hover,
+h2 a:hover,
+h3 a:hover,
+h4 a:hover,
+h5 a:hover,
+h6 a:hover {
+  text-decoration: none;
 }
 p {
   margin: 0 0 1em 0;
 }
 h1,
 .h1 {
-  font-size: 48px;
-  font-size: 4.8rem;
-  line-height: 48px;
-  line-height: 4.8rem;
-  font-weight: 300;
-  letter-spacing: 0em;
+  font-size: 28px;
+  font-size: 2.8rem;
+  line-height: 28px;
+  line-height: 2.8rem;
 }
 h2,
 .h2 {
-  font-size: 30px;
-  font-size: 3rem;
-  line-height: 30px;
-  line-height: 3rem;
-  font-weight: 600;
-  margin-bottom: 2.4rem;
+  font-size: 24px;
+  font-size: 2.4rem;
+  line-height: 24px;
+  line-height: 2.4rem;
 }
 h3,
 .h3 {
@@ -57,8 +69,6 @@ h3,
   font-size: 2.1rem;
   line-height: 21px;
   line-height: 2.1rem;
-  font-weight: 700;
-  margin-bottom: .9rem;
 }
 h4,
 .h4 {

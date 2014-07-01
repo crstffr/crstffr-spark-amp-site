@@ -63,11 +63,41 @@ strong {
 }
 hr {
   display: block;
+  clear: both;
   height: 1px;
   border: 0;
-  border-top: 1px solid #ccc;
+  border-top: 1px solid;
   margin: 1em 0;
   padding: 0;
+}
+code {
+  padding: 2px 4px;
+  font-size: 90%;
+}
+pre {
+  display: block;
+  padding: 9.5px;
+  margin: 0 0 10px;
+  font-size: 13px;
+  line-height: 1.5em;
+  word-break: break-all;
+  word-wrap: break-word;
+}
+pre code {
+  padding: 0;
+  font-size: inherit;
+  white-space: pre-wrap;
+}
+blockquote {
+  padding: 1em 1.5em;
+  margin: 0 0 1em;
+  font-size: 1.5em;
+  border-left: 5px solid;
+}
+blockquote p:last-child,
+blockquote ul:last-child,
+blockquote ol:last-child {
+  margin-bottom: 0;
 }
 img {
   vertical-align: middle;
@@ -83,16 +113,12 @@ dl {
 textarea {
   resize: vertical;
 }
-ol {
-  margin: 0;
-  padding-left: 15px;
-}
-ul {
+ul.bullets {
   list-style: none;
   padding: 0;
   margin: 0;
 }
-ul li {
+ul.bullets li {
   padding-left: 0;
   text-indent: 0;
 }

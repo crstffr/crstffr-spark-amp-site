@@ -1,0 +1,149 @@
+@import "_mixins";
+
+/* ==========================================================================
+   L A Y O U T
+   ========================================================================== */
+
+html {
+    &, body {
+        width: 100%;
+        height: 100%;
+    }
+}
+
+body * {
+    .box-sizing(border-box);
+}
+
+#main {
+    height: 100%;
+}
+
+#main-info {
+    position: fixed;
+    height: 100%;
+    width: 45%;
+    min-width: 350px;
+    text-align: center;
+
+    background: url(../img/aside-bg-board-gray.jpg) center center no-repeat;
+    background-size: cover;
+
+    .logo {
+
+        width: 300px;
+        margin: 12% auto 0 auto;
+
+        .title {
+            color: @color-spark-blue;
+            font-size: 3.75em;
+            display: inline-block;
+            text-transform: uppercase;
+            margin: 0;
+        }
+
+        .subtitle {
+            color: white;
+            font-weight: normal;
+        }
+
+    }
+
+    .copyright,
+    .powered-by {
+        p {
+            margin: 0 0 .5em 0;
+            font-size: 11px;
+            line-height: 1.5em;
+            color: #aaa;
+        }
+    }
+
+    .bottom {
+        position: absolute;
+        width: 100%;
+        bottom: 20px;
+    }
+
+}
+
+#main-content {
+    margin-left: 45%;
+    width: 55%;
+    padding: 0 4em 4em;
+    border-bottom: 1px solid transparent;
+    border-top: 1px solid transparent;
+    > article {
+        margin-top: 15%;
+    }
+}
+
+
+.post-header {
+
+    .post-title {
+        text-transform: uppercase;
+        font-weight: bold;
+        margin: 0 0 .5em 0;
+    }
+
+    .post-meta {
+        .clearfix();
+        margin-bottom: 1em;
+    }
+
+    .post-meta-data {
+        float: left;
+        display: block;
+        text-transform: uppercase;
+        margin-bottom: 1.5em;
+        .font-size(11,11);
+
+        i {
+            font-size: 18px;
+            margin-right: 5px;
+        }
+
+    }
+
+    .post-meta-data:last-of-type {
+        float: right;
+    }
+}
+
+.post-content {
+
+    p > img {
+        max-width: 100%;
+    }
+
+}
+
+.post-footer {
+    margin-top: 4em;
+
+    .section {
+        margin: 2em 0;
+    }
+
+    hr {
+        margin: 4em 0;
+    }
+
+    p {
+        margin: 0;
+    }
+
+    i {
+        margin-right: 5px;
+    }
+
+    h4 i {
+        vertical-align: bottom;
+    }
+
+    p i {
+
+    }
+
+}

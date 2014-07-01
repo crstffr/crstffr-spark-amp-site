@@ -129,22 +129,22 @@ module.exports = function (grunt) {
                 livereload: true
             },
             html: {
-                files: ['source/*.html'],
+                files: ['source/**/*.html'],
                 tasks: ['bake:preview']
             },
             less: {
-                files: ['source/less/*.less'],
+                files: ['source/assets/less/*.less'],
                 tasks: ['less:preview']
             },
             css: {
-                files: ['preview/css/*.css']
+                files: ['preview/assets/css/*.css']
             },
             js: {
-                files: ['source/js/**/*.js'],
+                files: ['source/assets/js/**/*.js'],
                 tasks: ['copy:preview']
             },
             img: {
-                files: ['source/img/**/*'],
+                files: ['source/assets/img/**/*'],
                 tasks: ['copy:preview']
             }
         }
@@ -196,18 +196,18 @@ module.exports = function (grunt) {
             preview: {
                 files: [{
                     expand: true,
-                    cwd: 'source/less/',
+                    cwd: 'source/assets/less/',
                     src: ['*.less', '!_*.less'],
-                    dest: 'preview/css/',
+                    dest: 'preview/assets/css/',
                     ext: '.css'
                 }]
             },
             dist: {
                 files: [{
                     expand: true,
-                    cwd: 'source/less/',
+                    cwd: 'source/assets/less/',
                     src: ['*.less', '!_*.less'],
-                    dest: 'dist/css/',
+                    dest: 'dist/assets/css/',
                     ext: '.css'
                 }]
             }
@@ -221,19 +221,19 @@ module.exports = function (grunt) {
                 files: [
                     {
                         expand: true,
-                        cwd: 'source/js/',
+                        cwd: 'source/assets/js/',
                         src: ['**'],
-                        dest: 'preview/js/'
+                        dest: 'preview/assets/js/'
                     },{
                         expand: true,
-                        cwd: 'source/img/',
+                        cwd: 'source/assets/img/',
                         src: ['**'],
-                        dest: 'preview/img/'
+                        dest: 'preview/assets/img/'
                     },{
                         expand: true,
-                        cwd: 'source/vendor/',
+                        cwd: 'source/assets/vendor/',
                         src: ['**'],
-                        dest: 'preview/vendor/'
+                        dest: 'preview/assets/vendor/'
                     }
                 ]
             }
@@ -241,19 +241,19 @@ module.exports = function (grunt) {
                 files: [
                     {
                         expand: true,
-                        cwd: 'source/js/',
+                        cwd: 'source/assets/js/',
                         src: ['**'],
-                        dest: 'dist/js/'
+                        dest: 'dist/assets/js/'
                     },{
                         expand: true,
-                        cwd: 'source/img/',
+                        cwd: 'source/assets/img/',
                         src: ['**'],
-                        dest: 'dist/img/'
+                        dest: 'dist/assets/img/'
                     },{
                         expand: true,
-                        cwd: 'source/vendor/',
+                        cwd: 'source/assets/vendor/',
                         src: ['**'],
-                        dest: 'dist/vendor/'
+                        dest: 'dist/assets/vendor/'
                     }
                 ]
             }
