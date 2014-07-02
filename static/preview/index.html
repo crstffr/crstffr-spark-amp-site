@@ -11,6 +11,24 @@
 
     (not yet live) http://crstffr.github.io #TODO: github code portfolio
 
+    --------------------------------------------------------------------------
+
+    Just a little introduction about myself.
+
+    My name is Christopher Mason and I have been developing web applications
+    and engaging web experiences since 2000. I started out in the early days
+    doing PHP and MySQL "Content Management System" development, but have since
+    focused my attention to the interactive prowess of Javascript and it's
+    flexibility as both a server-side and client-side language.
+
+    I have a passion for designing, developing and seeing an idea come to life.
+    If you have an idea that you'd like to see come to life, please feel to
+    connect with me on LinkedIn.
+
+    https://www.linkedin.com/in/crstffr
+
+    --------------------------------------------------------------------------
+
     As for how this site was built, let me outline briefly the pieces
     that went into creating this little site of mine.
 
@@ -38,19 +56,12 @@
     *   Single click of a button on Brace.io deploys the static site files
         to this public facing production server.
 
-    About myself:
+    And that's it. A simple blogging platform with very few requirements
+    for the server. I can add or edit pages from anywhere and deploy them
+    quickly using just my phone if needed.
 
-    My name is Christopher Mason and I have been developing web applications
-    and engaging web experiences since 2000. I started out in the early days
-    doing PHP and MySQL "Content Management System" development, but have since
-    focused my attention to the interactive prowess of Javascript and it's
-    flexibility as both a server-side and client-side language.
-
-    I have a passion for designing, developing and seeing an idea come to life.
-    If you have an idea that you'd like to see come to life, please feel to
-    connect with me on LinkedIn.
-
-    https://www.linkedin.com/in/crstffr
+    Thanks again for taking a look at my project. If you have any questions,
+    please feel free to comment on any of the posts.
 
 -->
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
@@ -65,8 +76,10 @@
         <meta name="viewport" content="width=device-width">
 
         <link href='//fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
-        <!--<link href='//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/lumen/bootstrap.min.css' rel='stylesheet' type='text/css'>-->
         <link href='//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css' rel='stylesheet' type='text/css'>
+
+        <script src="//cdnjs.cloudflare.com/ajax/libs/zepto/1.1.3/zepto.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js"></script>
 
         <!-- build:js /assets/js/vendor.min.js -->
         <script src="/assets/vendor/html5shiv/html5shiv.js"></script>
@@ -97,81 +110,83 @@
             <div class="logo">
                 <a href="/">
                     <img src="/assets/img/core-circle.png">
-                    <h1 class="title">Spark Amp</h1>
+                    <h1 class="title">Smart Amp</h1>
                     <p class="subtitle">A wireless audio amplifier for home audio distribution and automation</p>
                 </a>
             </div>
         
-            <!--
-            <div class="navigation">
-                <ul>
-                    <li><a href="">Dev Journal</a></li>
-                    <li><a href="">Pictures</a></li>
-                    <li><a href="">Code</a></li>
-                    <li><a href="">Music</a></li>
-                </ul>
-            </div>
-            -->
-        
             <div class="bottom">
-        
                 <div class="powered-by">
                     <p><img src="/assets/img/core-spark-100.png" width="35px"></p>
-        
                     <p>Powered by Spark Devices</p>
                 </div>
-        
                 <div class="copyright">
                     <p>Copyright &copy; 2014 Christopher Mason</p>
                 </div>
-        
             </div>
         
         </aside>
 
 <section id="main-content" class="theme-light post-listing">
 
+    <article class="post post-sticky well small">
+
+        <p><i class="fa fa-2x fa-fw fa-info-circle"></i>
+            This site is a developer journal that features technical writeups, software theory, amateur circuit designs,
+            opinions in programming, build progress updates and pictures, as well as the occasional embedded techno or
+            house track.
+        </p>
+
+        <p>
+            I hope this will be a starting point for an open source hardware project. For more information
+            on Smart Amp, please <a href="introduction.html">read my introduction post.</a>
+        </p>
+
+        <div class="post-meta">
+            <div class="post-meta-data"><i class="fa fa-fw fa-2x fa-clock-o"></i> Site Last Updated <span class="js-date">07-01-2014</span></div>
+        </div>
+    </article>
+
+    <div class="text-divider">
+        <span>And Now Onto the Posts</span>
+    </div>
+
     <article class="post">
 
-        <header class="post-header">
-            <h1 class="post-title"><a href="post.html">Welcome to Ghost</a></h1>
-            <hr>
-            <div class="post-meta">
-                <div class="post-meta-data"><i class="fa fa-clock-o"></i> 4 months ago</div>
-                <!--<div class="post-meta-data"><i class="icon-shortlink"></i> <a href="#">BIT.LY/1ES1TCF</a></div>-->
-                <div class="post-meta-data"><i class="fa fa-tags"></i> Hardware, Photos</div>
-            </div>
-        </header>
+        <h2 class="post-title"><a href="post.html">What is a Smart Amp and why are you building one?</a></h2>
 
-        <div class="post-content">
-            <p>You're live! Nice. We've put together a little post to introduce you to the Ghost editor and get you
-                started. You can manage your content by signing in to the admin area at <code>&lt;your blog URL&gt;/ghost/</code>.
-                When you arrive, you can select this post from a list on the left and see a preview of it on the right.
-                Click the little pencil icon at the top of the preview to edit this post and read the next section!</p>
+        <p>You're live! Nice. We've put together a little post to introduce you to the Ghost editor and get you
+            started. You can manage your content by signing in to the admin area at <code>&lt;your blog URL&gt;/ghost/</code>.
+            When you arrive, you can select this post from a list on the left and see a preview of it on the right.
+            Click the little pencil icon at the top of the preview to edit this post and read the next section!</p>
+        <p><a href="post.html" class="btn btn-primary btn-icon-right">Continue Reading <i class="fa fa-chevron-right"></i></a></p>
+
+        <div class="post-meta">
+            <div class="post-meta-data"><i class="fa fa-clock-o"></i> Posted <span class="js-date">06-30-2014</span></div>
+            <div class="post-meta-data"><i class="fa fa-tags"></i> Hardware, Photos</div>
         </div>
 
     </article>
 
+    <hr>
+
     <article class="post">
 
-        <header class="post-header">
-            <h1 class="post-title"><a href="post.html">Welcome to Ghost</a></h1>
-            <hr>
-            <div class="post-meta">
-                <div class="post-meta-data"><i class="fa fa-clock-o"></i> 4 months ago</div>
-                <!--<div class="post-meta-data"><i class="icon-shortlink"></i> <a href="#">BIT.LY/1ES1TCF</a></div>-->
-                <div class="post-meta-data"><i class="fa fa-tags"></i> Software, Theory</div>
-            </div>
-        </header>
+        <h2 class="post-title"><a href="music.html">This is a Music Post</a></h2>
 
         <div class="post-content">
-            <p>You're live! Nice. We've put together a little post to introduce you to the Ghost editor and get you
-                started. You can manage your content by signing in to the admin area at <code>&lt;your blog URL&gt;/ghost/</code>.
-                When you arrive, you can select this post from a list on the left and see a preview of it on the right.
-                Click the little pencil icon at the top of the preview to edit this post and read the next section!</p>
+            <p>Slow burner, heavy bass, put on the headphones or turn up the sub.</p>
+            <p><iframe src="https://embed.spotify.com/?uri=spotify:track:3SqeQZ605Fx6O2tQGos8hA&view=coverart" width="100%" height="380" frameborder="0" allowtransparency="true"></iframe></p>
+        </div>
+
+        <div class="post-meta">
+            <div class="post-meta-data"><i class="fa fa-clock-o"></i> Posted <span class="js-date">06-29-2014</span></div>
+            <div class="post-meta-data"><i class="fa fa-tags"></i> Software, Theory</div>
         </div>
 
     </article>
+
+    <hr>
 
 </section>
 

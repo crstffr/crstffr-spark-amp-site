@@ -24,10 +24,15 @@
 .theme-light h4,
 .theme-light h5,
 .theme-light h6 {
-  color: #333333;
+  color: #3a3a3a;
 }
-.theme-light .caption {
-  color: #999999;
+.theme-light h1 a,
+.theme-light h2 a,
+.theme-light h3 a,
+.theme-light h4 a,
+.theme-light h5 a,
+.theme-light h6 a {
+  color: #00afef;
 }
 .theme-light ::selection {
   background: #444444;
@@ -42,7 +47,8 @@
   background-color: #f9f2f4;
   border-radius: 4px;
 }
-.theme-light pre {
+.theme-light pre,
+.theme-light .well {
   color: #333333;
   background-color: #f5f5f5;
   border: 1px solid #c0c0c0;
@@ -54,26 +60,22 @@
   border-radius: 0;
 }
 .theme-light .post-footer i {
-  color: #333333;
+  color: #3a3a3a;
 }
-.theme-dark {
-  color: #ffffff;
-  background: #333333;
+.theme-light .btn-primary {
+  background-color: #00afef;
+  border-color: #009cd6;
 }
-.theme-dark h1,
-.theme-dark h2,
-.theme-dark h3,
-.theme-dark h4,
-.theme-dark h5,
-.theme-dark h6,
-.theme-dark .h1,
-.theme-dark .h2,
-.theme-dark .h3,
-.theme-dark .h4,
-.theme-dark .h5,
-.theme-dark .h6 {
-  color: #00adef;
+.theme-light .btn-primary,
+a.theme-light .btn-primary {
+  color: white;
 }
-.theme-dark .caption {
-  color: #ffffff;
+.theme-light .text-divider {
+  color: #999999;
+}
+.theme-light .text-divider:after {
+  border-color: #c0c0c0;
+}
+.theme-light .text-divider span {
+  background: #f0f0f0;
 }

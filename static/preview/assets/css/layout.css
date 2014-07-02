@@ -27,9 +27,12 @@ body * {
   width: 300px;
   margin: 12% auto 0 auto;
 }
+#main-info .logo a:hover {
+  text-decoration: none;
+}
 #main-info .logo .title {
   color: #00afef;
-  font-size: 3.75em;
+  font-size: 3.5em;
   display: inline-block;
   text-transform: uppercase;
   margin: 0;
@@ -53,61 +56,71 @@ body * {
 #main-content {
   margin-left: 45%;
   width: 55%;
-  padding: 0 4em 4em;
+  padding: 0 4em 0;
   border-bottom: 1px solid transparent;
   border-top: 1px solid transparent;
 }
-#main-content > article {
-  margin-top: 15%;
+#main-content article {
+  margin: 5% 0;
 }
-.post-header .post-title {
-  text-transform: uppercase;
+#main-content.post-detail article {
+  margin: 10% 0 0;
+}
+.post-title {
   font-weight: bold;
   margin: 0 0 .5em 0;
 }
-.post-header .post-meta {
-  *zoom: 1;
-  margin-bottom: 1em;
+.post-title i {
+  vertical-align: baseline;
 }
-.lt-ie9 .post-header .post-meta {
+.post-sticky {
+  padding: 1.5em;
+  margin-top: 0;
+}
+.post-meta {
+  *zoom: 1;
+}
+.lt-ie9 .post-meta {
   overflow: hidden;
 }
-.post-header .post-meta::before,
-.post-header .post-meta::after {
+.post-meta::before,
+.post-meta::after {
   content: "";
   display: table;
 }
-.post-header .post-meta::after {
+.post-meta::after {
   clear: both;
 }
-.post-header .post-meta-data {
+.post-meta-data {
   float: left;
   display: block;
   text-transform: uppercase;
-  margin-bottom: 1.5em;
   font-size: 11px;
   font-size: 1.1rem;
   line-height: 11px;
   line-height: 1.1rem;
 }
-.post-header .post-meta-data i {
+.post-meta-data i {
   font-size: 18px;
   margin-right: 5px;
 }
-.post-header .post-meta-data:last-of-type {
+.post-meta-data:last-of-type {
   float: right;
+}
+.post-meta-data:first-of-type {
+  float: left;
 }
 .post-content p > img {
   max-width: 100%;
 }
-.post-footer {
-  margin-top: 4em;
+.post-content iframe {
+  margin-top: 1em;
 }
 .post-footer .section {
   margin: 2em 0;
 }
 .post-footer hr {
-  margin: 4em 0;
+  margin: 3em 0 4.5em 0;
 }
 .post-footer p {
   margin: 0;
@@ -115,6 +128,57 @@ body * {
 .post-footer i {
   margin-right: 5px;
 }
-.post-footer h4 i {
-  vertical-align: bottom;
+.music-post h2,
+.music-post h3,
+.music-post h4,
+.music-post h5,
+.music-post h6 {
+  margin: 0 0 .25em;
+}
+.music-post iframe {
+  margin-top: 1em;
+}
+.text-divider {
+  margin: 5% 0;
+}
+@media only screen and (max-width: 767px) {
+  #main-info,
+  #main-content {
+    position: relative;
+    width: 100%;
+    margin: 0;
+    padding-top: 1px;
+  }
+  #main-info {
+    height: auto;
+  }
+  #main-info .logo {
+    margin-top: 3%;
+    padding-bottom: 3%;
+    width: 250px;
+  }
+  #main-info .logo img {
+    width: 150px;
+  }
+  #main-info .logo .title {
+    font-size: 2.75em;
+  }
+  #main-info .bottom {
+    display: none;
+  }
+  #main-content {
+    padding: 0 1.5em 2em;
+  }
+  #main-content > article {
+    margin: 10% 0;
+  }
+  #main-content .post-footer {
+    margin-top: 2em;
+  }
+  #main-content .post-footer hr {
+    margin: 1em 0 3em 0;
+  }
+  #main-content .post-sticky {
+    padding: .75em;
+  }
 }

@@ -15,7 +15,7 @@
     background: @theme-light-background;
 
     a {
-        color: @color-spark-blue;
+        color: @theme-light-links;
         font-weight: bold;
     }
 
@@ -28,13 +28,13 @@
     }
 
     h1,h2,h3,h4,h5,h6 {
-        color: @theme-light-heading;
+        & {
+            color: @theme-light-heading;
+        }
+        a {
+            color: @theme-light-links;
+        }
     }
-
-    .caption {
-        color: @theme-light-caption;
-    }
-
 
     ::selection {
         background: @theme-light-body;
@@ -52,7 +52,7 @@
         border-radius: 4px;
     }
 
-    pre {
+    pre, .well {
         color: @theme-light-code;
         background-color: #f5f5f5;
         border: 1px solid @theme-light-divider;
@@ -69,20 +69,24 @@
         color: @theme-light-heading;
     }
 
-}
-
-.theme-dark {
-
-    color: @theme-dark-body;
-    background: @theme-dark-background;
-
-    h1,h2,h3,h4,h5,h6,
-    .h1,.h2,.h3,.h4,.h5,.h6 {
-        color: @theme-dark-heading;
+    .btn-primary {
+        &, a& { color: white; }
+        background-color: @theme-light-primary-btn;
+        border-color: darken(@theme-light-primary-btn, 5%)
     }
 
-    .caption {
-        color: @theme-dark-caption;
+    .text-divider {
+
+        color: @theme-light-bullet;
+
+        &:after {
+            border-color: @theme-light-divider;
+        }
+
+        span {
+            background: @theme-light-background;
+        }
     }
+
 
 }

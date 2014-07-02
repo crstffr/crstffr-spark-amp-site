@@ -1,16 +1,92 @@
-<!doctype html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>SmartAmp Dev Journal - {{ title }}</title>
-  <script src="http://athena:35729/livereload.js"></script>
-</head>
-<body>
+{{> header}}
 
-  <h1>{{ title }}</h1>
+<section id="main-content" class="theme-light post-detail">
 
-  <time>{{ date }}</time>
-  {{{ contents  }}}
+    <article class="post">
 
-</body>
-</html>
+        <h1 class="post-title"><a href="/{{path}}">{{title}}</a></h1>
+
+        <div class="post-content">
+
+            {{{contents}}}
+
+        </div>
+
+        <div class="post-footer">
+
+            <div class="text-divider">
+                <span>Thanks for Reading!</span>
+            </div>
+
+            <div class="section">
+                <h4><i class="fa fa-fw fa-chevron-circle-right"></i> Up Next</h4>
+                <ul>
+                    <li><a href="post.html">This is the Next Post in the List</a></li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h4><i class="fa fa-fw fa-history"></i> Related Posts</h4>
+                <ul>
+                    <li><a href="post.html">Some sort of post here</a></li>
+                    <li><a href="post.html">Another post that's related</a></li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h4><i class="fa fa-fw fa-tags"></i> Tagged</h4>
+                <ul>
+                    <li><a href="#">Hardware</a>, <a href="#">Spark Core</a>, <a href="#">Photos</a></li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h4><i class="fa fa-fw fa-calendar"></i> Posted <span class="js-date">{{date}}</span></h4>
+                <p><i class="fa fa-fw fa-github"></i> by <a href="http://crstffr.github.io">Christopher Mason</a></p>
+            </div>
+
+            <!--
+
+            <hr>
+
+            <div class="section">
+
+                <!--
+                <h4>Comments</h4>
+                <a href="#disqus_thread" class="btn btn-lg js-show-comments">Show Comments</a>
+
+                <script type="text/javascript">
+                    var disqus_shortname = 'smartamp';
+                    (function() {
+                        var s = document.createElement('script');
+                        s.async = true;
+                        s.type = 'text/javascript';
+                        s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+                        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+                    }());
+                </script>
+
+
+
+                <div id="disqus_thread"></div>
+                <script type="text/javascript">
+                    var disqus_shortname = 'smartamp';
+                    (function() {
+                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                    })();
+                </script>
+
+
+            </div>
+
+            -->
+
+        </div>
+
+    </article>
+
+</section>
+
+{{> footer}}

@@ -1,3 +1,4 @@
 ---
-template: default.html
+title: Intro
+template: index.html
 ---

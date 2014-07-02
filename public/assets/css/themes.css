@@ -1,0 +1,82 @@
+/* ==========================================================================
+   T H E M E S
+   ========================================================================== */
+
+.logo .title {
+	font-family: Lato, sans-serif;
+}
+.theme-light {
+	color: #444444;
+	background: #f0f0f0;
+}
+.theme-light a {
+	color: #00afef;
+	font-weight: bold;
+}
+.theme-light hr {
+	border-color: #c0c0c0;
+}
+.theme-light blockquote {
+	border-color: #c0c0c0;
+}
+.theme-light h1,
+.theme-light h2,
+.theme-light h3,
+.theme-light h4,
+.theme-light h5,
+.theme-light h6 {
+	color: #3a3a3a;
+}
+.theme-light h1 a,
+.theme-light h2 a,
+.theme-light h3 a,
+.theme-light h4 a,
+.theme-light h5 a,
+.theme-light h6 a {
+	color: #00afef;
+}
+.theme-light *::selection {
+	background: #444444;
+	color: #f0f0f0;
+}
+.theme-light *::-moz-selection {
+	background: #444444;
+	color: #f0f0f0;
+}
+.theme-light code {
+	color: #c7254e;
+	background-color: #f9f2f4;
+	border-radius: 4px;
+}
+.theme-light pre,
+.theme-light .well {
+	color: #333333;
+	background-color: #f5f5f5;
+	border: 1px solid #c0c0c0;
+	border-radius: 4px;
+}
+.theme-light pre code {
+	color: inherit;
+	background-color: transparent;
+	border-radius: 0;
+}
+.theme-light .post-footer i {
+	color: #3a3a3a;
+}
+.theme-light .btn-primary {
+	background-color: #00afef;
+	border-color: #009cd6;
+}
+.theme-light .btn-primary,
+a.theme-light .btn-primary {
+	color: white;
+}
+.theme-light .text-divider {
+	color: #999999;
+}
+.theme-light .text-divider:after {
+	border-color: #c0c0c0;
+}
+.theme-light .text-divider span {
+	background: #f0f0f0;
+}

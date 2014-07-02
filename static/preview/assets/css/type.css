@@ -30,21 +30,6 @@ h5,
 h6 {
   font-weight: 700;
   margin: 1.25em 0 .5em 0;
-  text-transform: uppercase;
-}
-h1 a,
-h2 a,
-h3 a,
-h4 a,
-h5 a,
-h6 a,
-h1 a:hover,
-h2 a:hover,
-h3 a:hover,
-h4 a:hover,
-h5 a:hover,
-h6 a:hover {
-  text-decoration: none;
 }
 p {
   margin: 0 0 1em 0;
@@ -160,12 +145,10 @@ table tbody {
   text-align: center;
   position: relative;
   text-transform: uppercase;
-  letter-spacing: 4px;
-  color: #999999;
   z-index: 1;
 }
 .text-divider:after {
-  border-top: 1px solid rgba(0, 0, 0, 0.14);
+  border-top: 1px solid;
   content: "";
   position: absolute;
   width: 100%;
@@ -177,6 +160,14 @@ table tbody {
   top: 14px;
 }
 .text-divider span {
-  background: white;
-  padding: 0 28px;
+  padding: 0 1em;
+}
+.small {
+  font-size: 90%;
+}
+.smaller {
+  font-size: 80%;
+}
+.smallest {
+  font-size: 70%;
 }
