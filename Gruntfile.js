@@ -19,7 +19,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-processhtml');
     grunt.loadNpmTasks('grunt-lineending');
     grunt.loadNpmTasks('grunt-usemin');
-    grunt.loadNpmTasks('grunt-bake');
+    grunt.loadNpmTasks('grunt-shell');
 
 
 
@@ -47,10 +47,9 @@ module.exports = function (grunt) {
      */
     grunt.registerTask('preview', [
         'clean:preview'
+        ,'shell:preview'
         ,'less:preview'
         ,'copy:preview'
-        ,'bake:preview'
-        //,'connect:preview'
     ]);
 
     /**
@@ -65,12 +64,10 @@ module.exports = function (grunt) {
         'clean:dist'
         ,'less:dist'
         ,'copy:dist'
-        ,'bake:dist'
         ,'lineending:dist'
         ,'concat:dist'
         ,'cssmin:dist'
         ,'processhtml:dist'
-        //,'connect:dist'
     ]);
 
     /**
@@ -110,7 +107,7 @@ module.exports = function (grunt) {
         ,bower: {
             install: {
                 options: {
-                    targetDir: 'source/vendor/',
+                    targetDir: 'source/assets/vendor/',
                     install: false,
                     verbose: true,
                     cleanTargetDir: true,
@@ -128,16 +125,20 @@ module.exports = function (grunt) {
                 spawn: false,
                 livereload: true
             },
-            html: {
-                files: ['source/**/*.html'],
-                tasks: ['bake:preview']
+            md: {
+                files: ['source/content/**/*.md'],
+                tasks: ['shell:preview']
+            },
+            templates: {
+                files: ['source/templates/**/*.html'],
+                tasks: ['shell:preview']
             },
             less: {
                 files: ['source/assets/less/*.less'],
                 tasks: ['less:preview']
             },
             css: {
-                files: ['preview/assets/css/*.css']
+                files: ['public/assets/css/*.css']
             },
             js: {
                 files: ['source/assets/js/**/*.js'],
@@ -161,7 +162,7 @@ module.exports = function (grunt) {
                     hostname: '*',
                     keepalive: true,
                     livereload: true,
-                    base: 'preview/',
+                    base: 'public/',
                     open: true
                 }
             }
@@ -198,7 +199,7 @@ module.exports = function (grunt) {
                     expand: true,
                     cwd: 'source/assets/less/',
                     src: ['*.less', '!_*.less'],
-                    dest: 'preview/assets/css/',
+                    dest: 'public/assets/css/',
                     ext: '.css'
                 }]
             },
@@ -223,17 +224,17 @@ module.exports = function (grunt) {
                         expand: true,
                         cwd: 'source/assets/js/',
                         src: ['**'],
-                        dest: 'preview/assets/js/'
+                        dest: 'public/assets/js/'
                     },{
                         expand: true,
                         cwd: 'source/assets/img/',
                         src: ['**'],
-                        dest: 'preview/assets/img/'
+                        dest: 'public/assets/img/'
                     },{
                         expand: true,
                         cwd: 'source/assets/vendor/',
                         src: ['**'],
-                        dest: 'preview/assets/vendor/'
+                        dest: 'public/assets/vendor/'
                     }
                 ]
             }
@@ -259,37 +260,12 @@ module.exports = function (grunt) {
             }
         }
 
-        /**
-         * Bake: Templating engine that allows the declaration of
-         * externally included files.  All HTML files in the root
-         * of the source folder will be compiled, as long as they
-         * don't start with an _underscore.  _Underscore files are
-         * my nomenclature for a partial HTML file.
-         */
-        ,bake: {
+        ,shell: {
             preview: {
-                files: [{
-                    expand: true,
-                    cwd: 'source/',
-                    src: ['*.html', '!_*.html'],
-                    dest: 'preview/'
-                    /*
-                    rename: function(dest, src) {
-                      return dest + src.substring(1);
-                    }*/
-                }]
-            }
-            ,dist: {
-                files: [{
-                    expand: true,
-                    cwd: 'source/',
-                    src: ['*.html', '!_*.html'],
-                    dest: 'dist/'
-                    /*
-                    rename: function(dest, src) {
-                      return dest + src.substring(1);
-                    }*/
-                }]
+                options: {
+                    stderr: false
+                },
+                command: 'node build.js'
             }
         }
 
@@ -308,9 +284,9 @@ module.exports = function (grunt) {
             preview: {
                 files: [{
                         expand: true,
-                        cwd: 'preview/',
+                        cwd: 'public/',
                         src: ['**/*.html', '**/*.css', '**/*.js'],
-                        dest: 'preview/'
+                        dest: 'public/'
                 }]
             },
             dist: {

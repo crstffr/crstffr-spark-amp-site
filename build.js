@@ -5,20 +5,17 @@ var builddate = require('metalsmith-build-date');
 var templates = require('metalsmith-templates');
 var beautify = require('metalsmith-beautify');
 var markdown = require('metalsmith-markdown');
+var excerpts = require('metalsmith-excerpt');
 var branch = require('metalsmith-branch');
 var ignore = require('metalsmith-ignore');
 var watch = require('metalsmith-watch');
 var less = require('metalsmith-less');
 
 Metalsmith(__dirname)
-    .source('./source')
+    .source('source/content/')
     .destination('./public')
-    .use(less({
-        pattern: ['**/*.less', '!**/_*.less'],
-        parse: {
-            paths: [__dirname + '/source/assets/less']
-        }
-    }))
+    .clean(false)
+    .use(excerpts())
     .use(builddate())
     .use(markdown())
     .use(beautify({
@@ -50,17 +47,6 @@ Metalsmith(__dirname)
             }
         }))
     )
-    .use(ignore([
-        'templates/*'
-    ]))
-
-//    .use(watch({
-//        pattern : [
-//            '**/*.md'
-//        ],
-//        livereload: true
-//    }))
-
     .build(function(err) {
         if (err) throw err;
     });
