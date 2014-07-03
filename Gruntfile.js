@@ -138,11 +138,11 @@ module.exports = function (grunt) {
                 tasks: ['shell:build']
             },
             md: {
-                files: ['source/content/**/*.md'],
+                files: ['source/**/*.md'],
                 tasks: ['shell:build']
             },
             templates: {
-                files: ['source/templates/**/*.html'],
+                files: ['source/**/*.html'],
                 tasks: ['shell:build']
             },
             less: {

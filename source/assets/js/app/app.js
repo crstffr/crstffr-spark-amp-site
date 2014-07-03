@@ -5,12 +5,8 @@
         console.log("Javascript App() is working");
 
         $(function(){
-
-            console.log("DOM READY");
              _convertDates();
-
         });
-
 
         function _convertDates() {
 
@@ -19,10 +15,8 @@
                 var d = new Date($e.text());
                 var s = moment(d).fromNow();
                 $e.text(s);
-            })
-
+            });
         }
-
 
     }
 
