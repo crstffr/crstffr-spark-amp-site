@@ -9,7 +9,6 @@ var excerpts = require('metalsmith-excerpt');
 var branch = require('metalsmith-branch');
 var ignore = require('metalsmith-ignore');
 var watch = require('metalsmith-watch');
-var less = require('metalsmith-less');
 
 Metalsmith(__dirname)
     .source('source/content/')
