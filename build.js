@@ -5,7 +5,7 @@ var builddate = require('metalsmith-build-date');
 var templates = require('metalsmith-templates');
 var beautify = require('metalsmith-beautify');
 var markdown = require('metalsmith-markdown');
-var excerpts = require('metalsmith-excerpt');
+var excerpts = require('metalsmith-excerpts');
 var branch = require('metalsmith-branch');
 var ignore = require('metalsmith-ignore');
 var watch = require('metalsmith-watch');
@@ -15,20 +15,15 @@ Metalsmith(__dirname)
     .source('source/content/')
     .destination('./public')
     .clean(false)
-    .use(excerpts())
     .use(builddate())
     .use(markdown())
-    .use(beautify({
-        "js": false,
-        "html": {
-            "wrap_line_length": 80
-        }
-    }))
+
     .use(permalinks({
         pattern: ':date/:title',
         date: 'YYYY',
         relative: false
     }))
+    .use(excerpts())
     .use(collections({
         articles: {
             pattern: 'content/**/*.md',
@@ -47,6 +42,7 @@ Metalsmith(__dirname)
             }
         }))
     )
+
     .build(function(err) {
         if (err) throw err;
     });
