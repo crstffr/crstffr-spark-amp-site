@@ -18,6 +18,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-processhtml');
     grunt.loadNpmTasks('grunt-lineending');
+    grunt.loadNpmTasks('grunt-concurrent');
     grunt.loadNpmTasks('grunt-usemin');
     grunt.loadNpmTasks('grunt-shell');
 
@@ -47,9 +48,11 @@ module.exports = function (grunt) {
      */
     grunt.registerTask('preview', [
         'clean:preview'
-        ,'shell:preview'
+        ,'shell:build'
         ,'less:preview'
         ,'copy:preview'
+        ,'concurrent:preview'
+
     ]);
 
     /**
@@ -88,6 +91,7 @@ module.exports = function (grunt) {
     grunt.registerTask('server:dist', ['dist', 'connect:dist']);
 
 
+    grunt.registerTask('default', 'preview');
 
     /**
      * *************************************
@@ -98,7 +102,11 @@ module.exports = function (grunt) {
      */
     grunt.initConfig({
 
-        pkg: grunt.file.readJSON('package.json')
+        pkg: grunt.file.readJSON('package.json'),
+
+        concurrent: {
+            preview: ['watch', 'shell:server']
+        }
 
         /**
          * Bower-task: copies Bower installed dependencies into the
@@ -127,18 +135,15 @@ module.exports = function (grunt) {
             },
             md: {
                 files: ['source/content/**/*.md'],
-                tasks: ['shell:preview']
+                tasks: ['shell:build']
             },
             templates: {
                 files: ['source/templates/**/*.html'],
-                tasks: ['shell:preview']
+                tasks: ['shell:build']
             },
             less: {
                 files: ['source/assets/less/*.less'],
                 tasks: ['less:preview']
-            },
-            css: {
-                files: ['public/assets/css/*.css']
             },
             js: {
                 files: ['source/assets/js/**/*.js'],
@@ -261,11 +266,18 @@ module.exports = function (grunt) {
         }
 
         ,shell: {
-            preview: {
+            build: {
                 options: {
-                    stderr: false
+                    stderr: true
                 },
                 command: 'node build.js'
+            },
+            server: {
+                options: {
+                    stdout: true,
+                    stderr: true
+                },
+                command: 'cd public && ws'
             }
         }
 
@@ -345,7 +357,7 @@ module.exports = function (grunt) {
                     {
                         expand: true,
                         cwd: 'dist/',
-                        src: ['*.html'],
+                        src: ['**/*.html'],
                         dest: 'dist/'
                     }
                 ]

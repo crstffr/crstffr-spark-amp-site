@@ -1,4 +1,4 @@
 ---
-title: Intro
+title: Introduction
 template: index.html
 ---

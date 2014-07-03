@@ -36,6 +36,8 @@
     "metalsmith-collections": "^0.4.1",
     "metalsmith": "^0.8.0",
     "highlight.js": "~8.0.0",
-    "grunt-shell": "~0.7.0"
+    "grunt-shell": "~0.7.0",
+    "grunt-concurrent": "~0.5.0",
+    "ws": "~0.4.31"
   }
 }
