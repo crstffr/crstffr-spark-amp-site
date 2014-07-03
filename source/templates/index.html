@@ -28,11 +28,7 @@
 
         <h2 class="post-title"><a href="{{ path }}">{{title}}</a></h2>
 
-        <p>You're live! Nice. We've put together a little post to introduce you to the Ghost editor and get you
-            started. You can manage your content by signing in to the admin area at <code>&lt;your blog URL&gt;/ghost/</code>.
-            When you arrive, you can select this post from a list on the left and see a preview of it on the right.
-            Click the little pencil icon at the top of the preview to edit this post and read the next section!</p>
-        <p><a href="{{ path }}" class="btn btn-primary btn-icon-right">Continue Reading <i class="fa fa-chevron-right"></i></a></p>
+        {{excerpt}}
 
         <div class="post-meta">
             <div class="post-meta-data"><i class="fa fa-clock-o"></i> Posted <span class="js-date" title="{{date}}">{{date}}</span></div>

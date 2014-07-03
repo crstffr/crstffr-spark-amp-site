@@ -133,6 +133,10 @@ module.exports = function (grunt) {
                 spawn: false,
                 livereload: true
             },
+            buildjs: {
+                files: ['build.js'],
+                tasks: ['shell:build']
+            },
             md: {
                 files: ['source/content/**/*.md'],
                 tasks: ['shell:build']
