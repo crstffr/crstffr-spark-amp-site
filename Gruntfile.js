@@ -49,10 +49,12 @@ module.exports = function (grunt) {
     grunt.registerTask('preview', [
         'clean:preview'
         ,'shell:build'
+        ,'shell:pictures'
         ,'less:preview'
-        ,'copy:preview'
+        ,'copy:js'
+        ,'copy:img'
+        ,'copy:vendor'
         ,'concurrent:preview'
-
     ]);
 
     /**
@@ -151,11 +153,19 @@ module.exports = function (grunt) {
             },
             js: {
                 files: ['source/assets/js/**/*.js'],
-                tasks: ['copy:preview']
+                tasks: ['copy:js']
             },
             img: {
                 files: ['source/assets/img/**/*'],
-                tasks: ['copy:preview']
+                tasks: ['copy:img']
+            },
+            img: {
+                files: ['source/assets/vendor/**/*'],
+                tasks: ['copy:vendor']
+            },
+            pictures: {
+                files: ['source/content/pictures/**/*'],
+                tasks: ['shell:pictures']
             }
         }
 
@@ -182,7 +192,6 @@ module.exports = function (grunt) {
                     keepalive: true,
                     base: 'dist/'
                 }
-
             }
         }
 
@@ -190,8 +199,16 @@ module.exports = function (grunt) {
          * Contrib-clean: Deletes directories.
          */
         ,clean: {
+            options: { force: true },
             preview: {
-                src: ['preview']
+                src: [
+                    'public/assets',
+                    'public/posts',
+                    'public/tag'
+                ]
+            }
+            ,pictures: {
+                src: ['public/pictures']
             }
             ,dist: {
                 src: ['dist']
@@ -227,46 +244,35 @@ module.exports = function (grunt) {
          * Contrib-copy: Copies files to and from directories.
          */
         ,copy: {
-            preview: {
+
+            js: {
                 files: [
-                    {
-                        expand: true,
-                        cwd: 'source/assets/js/',
-                        src: ['**'],
-                        dest: 'public/assets/js/'
-                    },{
-                        expand: true,
-                        cwd: 'source/assets/img/',
-                        src: ['**'],
-                        dest: 'public/assets/img/'
-                    },{
-                        expand: true,
-                        cwd: 'source/assets/vendor/',
-                        src: ['**'],
-                        dest: 'public/assets/vendor/'
-                    }
-                ]
-            }
-            ,dist: {
+                {
+                    expand: true,
+                    cwd: 'source/assets/js/',
+                    src: ['**'],
+                    dest: 'public/assets/js/'
+                }
+            ]},
+            img: {
                 files: [
-                    {
-                        expand: true,
-                        cwd: 'source/assets/js/',
-                        src: ['**'],
-                        dest: 'dist/assets/js/'
-                    },{
-                        expand: true,
-                        cwd: 'source/assets/img/',
-                        src: ['**'],
-                        dest: 'dist/assets/img/'
-                    },{
-                        expand: true,
-                        cwd: 'source/assets/vendor/',
-                        src: ['**'],
-                        dest: 'dist/assets/vendor/'
-                    }
-                ]
-            }
+                {
+                    expand: true,
+                    cwd: 'source/assets/img/',
+                    src: ['**'],
+                    dest: 'public/assets/img/'
+                }
+            ]},
+            vendor: {
+                files: [
+                {
+                    expand: true,
+                    cwd: 'source/assets/vendor/',
+                    src: ['**'],
+                    dest: 'public/assets/vendor/'
+                }
+            ]}
+
         }
 
         ,shell: {
@@ -274,7 +280,13 @@ module.exports = function (grunt) {
                 options: {
                     stderr: true
                 },
-                command: 'node build.js'
+                command: 'node build-blog.js'
+            },
+            pictures: {
+                options: {
+                    stderr: true
+                },
+                command: 'node build-pictures.js'
             },
             server: {
                 options: {

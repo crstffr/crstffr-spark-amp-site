@@ -2,17 +2,16 @@ var Metalsmith = require('metalsmith');
 var collections = require('metalsmith-collections');
 var permalinks = require('metalsmith-permalinks');
 var metaobject = require('metalsmith-metaobject');
-var builddate = require('metalsmith-build-date');
 var templates = require('metalsmith-templates');
 var beautify = require('metalsmith-beautify');
 var markdown = require('metalsmith-markdown');
 var excerpts = require('metalsmith-excerpts');
 var branch = require('metalsmith-branch');
 var ignore = require('metalsmith-ignore');
-var more = require('metalsmith-more');
+var more = require('./modules/more-or-less');
 
 var options = {
-    perPage: 10
+    perPage: 100
 }
 
 var data = {
@@ -23,11 +22,11 @@ var data = {
     }
 }
 
-
 Metalsmith(__dirname)
-    .source('source/blog/')
-    .destination('./public')
     .clean(false)
+    .source('source/content/')
+    .destination('./public')
+    .use(ignore('pictures/**/*'))
     .use(collections({
         posts: {
             pattern: 'articles/*',
@@ -38,7 +37,7 @@ Metalsmith(__dirname)
     .use(metaobject(data))
     .use(blogIndexList)
     .use(blogTagLists)
-    .use(builddate())
+    .use(buildDate)
     .use(markdown())
     .use(more())
     .use(excerpts())
@@ -57,6 +56,7 @@ Metalsmith(__dirname)
             partials: {
                 tags: 'partials/tags',
                 aside: 'partials/aside',
+                about: 'partials/about',
                 header: 'partials/header',
                 footer: 'partials/footer'
             }
@@ -68,7 +68,11 @@ Metalsmith(__dirname)
 
 
 
-
+function buildDate(files, metalsmith, done) {
+    var data = metalsmith.metadata();
+    data.builddate = new Date();
+    done();
+}
 
 function blogIndexList(files, metalsmith, done) {
     var index = files['index.md'],
@@ -120,7 +124,8 @@ function blogTagLists(files, metalsmith, done) {
 
     for (tag in tags) {
         files['tag/' + tag + '/index.md'] = {
-            template: 'list.html',
+            template: 'list-tag.html',
+            tag: tag,
             mode: '0644',
             contents: '',
             title: "Posts tagged '" + tag + "'",

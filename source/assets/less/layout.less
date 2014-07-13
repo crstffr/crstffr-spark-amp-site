@@ -22,9 +22,9 @@ body * {
 #main-info {
     position: fixed;
     height: 100%;
-    width: 45%;
     min-width: 350px;
     text-align: center;
+    width: @layout-left-width;
 
     background: url(../img/aside-bg-board-gray.jpg) center center no-repeat;
     background-size: cover;
@@ -32,7 +32,7 @@ body * {
     .logo {
 
         width: 300px;
-        margin: 12% auto 0 auto;
+        margin: 10% auto 0 auto;
 
         a:hover {
             text-decoration: none;
@@ -72,16 +72,17 @@ body * {
 }
 
 #main-content {
-    margin-left: 45%;
-    width: 55%;
-    padding: 0 4em 0;
+    margin-left: @layout-left-width;
+    width: @layout-right-width;;
+    padding: 2em 4em 0;
     border-bottom: 1px solid transparent;
     border-top: 1px solid transparent;
-    article {
-        margin: 5% 0;
+    .post {
+        margin: @size-1 0;
     }
     &.post-detail {
-        article {
+        padding-bottom: @size-1;
+        .post {
             margin: 10% 0 0;
         }
     }
@@ -89,7 +90,7 @@ body * {
 
 .post-detail {
     .post-title {
-        margin-top: 5%;
+        margin-top: @size-1;
     }
 }
 
@@ -102,9 +103,15 @@ body * {
     }
 }
 
-.post-sticky {
+.well {
     padding: 1.5em;
     margin-top: 0;
+}
+
+.post-excerpt {
+    .post-meta {
+        margin-top: @size-1;
+    }
 }
 
 .post-meta {
@@ -121,7 +128,6 @@ body * {
         font-size: 18px;
         margin-right: 5px;
     }
-
 }
 
 .post-meta-data:last-of-type {
@@ -175,7 +181,7 @@ body * {
 }
 
 .text-divider {
-    margin: 5% 0;
+    margin: @size-1 0;
 }
 
 
@@ -213,9 +219,9 @@ body * {
     }
 
     #main-content {
-        padding: 0 1.5em 2em;
+        padding: 2em 1.5em 2em;
 
-        & > article {
+        & > .post {
             margin: 10% 0;
         }
 
@@ -226,7 +232,7 @@ body * {
             }
         }
 
-        .post-sticky {
+        .well {
             padding: .75em;
         }
 

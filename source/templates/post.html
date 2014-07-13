@@ -5,11 +5,6 @@
     <article class="post">
 
         <header class="post-meta">
-            <!--
-            <div class="post-meta-data">
-                <a href="/{{path}}"><i class="fa fa-fw fa-link"></i></a>
-            </div>
-            -->
             <div class="post-meta-data">
                 <i class="fa fa-clock-o"></i>
                 Posted <time pubdate datetime="{{date}}" title="{{date}}" class="js-date">{{date}}</time>
@@ -32,10 +27,7 @@
             </div>
 
             <div class="section">
-                <h4><i class="fa fa-fw fa-chevron-circle-right"></i> Up Next</h4>
-                <ul>
-                    <li><a href="#">This is the Next Post in the List</a></li>
-                </ul>
+                <h4><i class="fa fa-fw fa-chevron-circle-right"></i> Up Next: <a href="#">This is the Next Post in the List</a></h4>
             </div>
 
             <div class="section">
@@ -91,6 +83,12 @@
         </div>
 
     </article>
+
+    <div class="text-divider">
+        <span>About this Site</span>
+    </div>
+
+    {{> about}}
 
 </section>
 

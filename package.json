@@ -39,12 +39,10 @@
     "grunt-shell": "~0.7.0",
     "grunt-concurrent": "~0.5.0",
     "ws": "~0.4.31",
-    "metalsmith-build-date": "~0.1.0",
     "metalsmith-beautify": "0.0.7",
     "metalsmith-branch": "0.0.4",
     "metalsmith-excerpts": "~1.0.0",
     "metalsmith-more": "~0.1.0",
-    "metalsmith-metadata": "0.0.1",
-    "metalsmith-metaobject": "~0.1.0"
+    "easyimage": "~0.1.7"
   }
 }

@@ -2,17 +2,16 @@
 
     var App = function(){
 
-        console.log("Javascript App() is working");
-
         $(function(){
-             _convertDates();
+            _convertDates();
+            setInterval(_convertDates, 1000 * 60 * 5);
         });
 
         function _convertDates() {
 
             $(".js-date").each(function(i, element){
                 var $e = $(element);
-                var d = new Date($e.text());
+                var d = new Date($e.attr('title'));
                 var s = moment(d).fromNow();
                 $e.text(s);
             });
