@@ -1,5 +1,5 @@
 ---
-title: Wifi Multizone Audio Streaming - Pt 3
+title: Wifi Audio Streaming - Pt 3
 date: 2012-12-14
 tags:
     - ideas
@@ -22,6 +22,5 @@ So apparently the Icecast server is redundant, since VLC can take the microphone
 
 
 ## So here's a plan ##
-2012-12-17
 
-My $200 refurbished Dell will run Windows 7 and also an Ubuntu virtual machine that will be running Spotify and `Spot Commander`.  The audio will leak out of the virtual machine to Windows, where VLC will pipe it across the network in an RTSP stream.
+I picked up a $200 refurbished Dell a while back, it will run Windows 7 and also an Ubuntu virtual machine that will be running Spotify and `Spot Commander`.  The audio will leak out of the virtual machine to Windows, where VLC will pipe it across the network in an RTSP stream.

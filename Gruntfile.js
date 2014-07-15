@@ -136,7 +136,7 @@ module.exports = function (grunt) {
                 livereload: true
             },
             buildjs: {
-                files: ['build.js'],
+                files: ['build-blog.js'],
                 tasks: ['shell:build']
             },
             md: {

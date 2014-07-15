@@ -35,6 +35,7 @@ Metalsmith(__dirname)
         }
     }))
     .use(metaobject(data))
+    .use(blogNextPosts)
     .use(blogIndexList)
     .use(blogTagLists)
     .use(buildDate)
@@ -74,6 +75,32 @@ function buildDate(files, metalsmith, done) {
     done();
 }
 
+function blogNextPosts(files, metalsmith, done) {
+
+    var file,
+        post,
+        next,
+        prev;
+
+    // Swap the Prev/Next because when the collection is sorted
+    // in reverse order, they don't make sense.  This rights it.
+
+    for (file in files) {
+
+        post = files[file];
+        next = post.previous;
+        prev = post.next;
+
+        files[file].next = next;
+        files[file].prev = prev;
+
+    }
+
+    done();
+
+}
+
+
 function blogIndexList(files, metalsmith, done) {
     var index = files['index.md'],
         posts = metalsmith.data.posts,
@@ -85,6 +112,7 @@ function blogIndexList(files, metalsmith, done) {
     index.pagination = [];
 
     for (var i = 1; i <= index.numPages; i++) {
+
         index.pagination.push({
             num: i,
             url: (1 == i) ? '/' : '/index/' + i
@@ -109,6 +137,7 @@ function blogIndexList(files, metalsmith, done) {
 
 
 function blogTagLists(files, metalsmith, done) {
+
     var tags = {};
 
     for (p in metalsmith.data.posts) {
@@ -117,10 +146,11 @@ function blogTagLists(files, metalsmith, done) {
             if (! tags[tag]) {
                 tags[tag] = [];
             }
-
             tags[tag].push(metalsmith.data.posts[p]);
         }
     }
+
+    console.log(tags);
 
     for (tag in tags) {
         files['tag/' + tag + '/index.md'] = {

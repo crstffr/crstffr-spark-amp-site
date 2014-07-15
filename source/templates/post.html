@@ -23,23 +23,37 @@
         <div class="post-footer">
 
             <div class="text-divider">
-                <span>Thanks for Reading!</span>
+                <span>That's all for now</span>
             </div>
 
+            {{#if next}}
             <div class="section">
-                <h4><i class="fa fa-fw fa-chevron-circle-right"></i> Up Next: <a href="#">This is the Next Post in the List</a></h4>
+                <h4><i class="fa fa-fw fa-chevron-circle-right"></i>Up Next: <a href="/{{next.path}}">{{next.title}}</a></h4>
             </div>
+            {{/if}}
 
+            <!--
             <div class="section">
-                <h4><i class="fa fa-fw fa-history"></i> Related Posts</h4>
+                <h4><i class="fa fa-fw fa-history"></i>Related Posts</h4>
                 <ul>
                     <li><a href="#">Some sort of post here</a></li>
                     <li><a href="#">Another post that's related</a></li>
                 </ul>
             </div>
+            -->
+
+            {{#if prev}}
+                <div class="section">
+                    <h4><i class="fa fa-fw fa-chevron-circle-left"></i>Previously: <a href="/{{prev.path}}">{{prev.title}}</a></h4>
+                </div>
+            {{/if}}
 
             <div class="section">
-                <h4><i class="fa fa-fw fa-github"></i> Posted by <a href="{{author.website}}" target="_blank">{{author.name}}</a></h4>
+                <h4><i class="fa fa-fw fa-github"></i>by <a href="{{author.website}}" target="_blank">{{author.name}}</a></h4>
+            </div>
+
+            <div class="section">
+                <h4><i class="fa fa-fw fa-home"></i><a href="/">Main Index</a></h4>
             </div>
 
             <!--

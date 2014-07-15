@@ -8,13 +8,14 @@ var source = 'source/content/pictures/';
 var data = loadData(dataFile);
 var dest = 'public/pictures/';
 
-var variants = {
-    large: '800',
-    medium: '500',
-    small: '200',
-    tiny: '60'
-}
+// Max width @ quality level (1-100)
 
+var variants = {
+    large: '800@85',
+    medium: '500@80',
+    small: '200@75',
+    tiny: '60@55'
+};
 
 if (!fs.existsSync(dest)) { fs.mkdirSync(dest); }
 
@@ -29,6 +30,8 @@ Metalsmith(__dirname)
 function resizeImages(files) {
 
     var basename,
+        quality,
+        resize,
         source,
         copy,
         size,
@@ -41,25 +44,23 @@ function resizeImages(files) {
         dir = path.dirname(file);
         basename = path.basename(file, ext);
 
-        /*
-        image.info(dest + file, function(err, info) {
-            if (err) throw err;
-            console.log(info);
-        });
-        */
-
         for (variant in variants) {
 
-            size = variants[variant];
+            resize = variants[variant].split('@');
+            quality = resize[1];
+            size = resize[0];
+
             copy = dest + dir + '/' + variant + ext;
             source = dest + file;
 
-            console.log("Resizing: ", copy);
+            console.log("Resizing", size + 'px @', quality + '%', dir + '/' + variant + ext);
 
             image.resize({
                 src: source,
                 dst: copy,
-                width: size
+                width: size,
+                height: 10000,
+                quality: quality
             }, function(){
 
             });
