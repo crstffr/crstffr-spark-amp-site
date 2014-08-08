@@ -54,7 +54,8 @@ module.exports = function (grunt) {
         ,'copy:js'
         ,'copy:img'
         ,'copy:vendor'
-        ,'concurrent:preview'
+        //,'concurrent:preview'
+        ,'watch'
     ]);
 
     /**

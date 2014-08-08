@@ -24,7 +24,7 @@ var data = {
 
 Metalsmith(__dirname)
     .clean(false)
-    .source('source/content/')
+    .source('source/content')
     .destination('./public')
     .use(ignore('pictures/**/*'))
     .use(collections({
@@ -149,8 +149,6 @@ function blogTagLists(files, metalsmith, done) {
             tags[tag].push(metalsmith.data.posts[p]);
         }
     }
-
-    console.log(tags);
 
     for (tag in tags) {
         files['tag/' + tag + '/index.md'] = {
