@@ -1,8 +1,10 @@
 var Metalsmith = require('metalsmith');
 var image = require('easyimage');
+var async = require('async');
 var path = require('path');
 var fs = require('fs');
 
+var resizeQueue = [];
 var dataFile = './public/pictures/pictures.json';
 var source = 'source/content/pictures/';
 var data = loadData(dataFile);
@@ -25,7 +27,6 @@ Metalsmith(__dirname)
     .destination(dest)
     .use(pathModifier)
     .build();
-
 
 function resizeImages(files) {
 
@@ -53,27 +54,28 @@ function resizeImages(files) {
             copy = dest + dir + '/' + variant + ext;
             source = dest + file;
 
-            console.log("Resizing", size + 'px @', quality + '%', dir + '/' + variant + ext);
-
-            image.resize({
+            queueResize({
                 src: source,
                 dst: copy,
                 width: size,
                 height: 10000,
                 quality: quality
-            }, function(){
-
             });
-
-
         }
-
-
-
-
     }
+
+    async.series(resizeQueue);
+
 }
 
+function queueResize(params) {
+    resizeQueue.push(function(callback){
+        image.resize(params).then(function(image) {
+            console.log('Resized', params.width + 'px @', params.quality + '%', params.dst);
+            callback();
+        });
+    });
+}
 
 
 function pathModifier(files, metalsmith, done) {

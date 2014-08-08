@@ -15,14 +15,11 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
-    grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-processhtml');
     grunt.loadNpmTasks('grunt-lineending');
     grunt.loadNpmTasks('grunt-concurrent');
     grunt.loadNpmTasks('grunt-usemin');
     grunt.loadNpmTasks('grunt-shell');
-
-
 
     /**
      * *************************************
@@ -41,60 +38,22 @@ module.exports = function (grunt) {
     ]);
 
     /**
-     * Task: grunt preview
+     * Task: grunt rebuild
      * Compile the LESS into CSS, copy over other site assets into
-     * the preview directory, and then bake the templates into HTML.
-     * Used for previewing the source files during development.
+     * the public directory, and then bake the templates into HTML.
+     * Rebuilds the entire site from scratch
      */
-    grunt.registerTask('preview', [
-        'clean:preview'
+    grunt.registerTask('rebuild', [
+        'clean:public'
         ,'shell:build'
         ,'shell:pictures'
-        ,'less:preview'
+        ,'less:public'
         ,'copy:js'
         ,'copy:img'
         ,'copy:vendor'
-        //,'concurrent:preview'
-        ,'watch'
     ]);
 
-    /**
-     * Task: grunt dist
-     * Compile the LESS into CSS, copy over other site assets into
-     * the dist directory, bake the templates into HTML, convert CRLF
-     * into LF, concatenate and minify all CSS, and then process the
-     * final HTML files to remove any development only code.
-     * Used for preparing the site files for distribution.
-     */
-    grunt.registerTask('dist', [
-        'clean:dist'
-        ,'less:dist'
-        ,'copy:dist'
-        ,'lineending:dist'
-        ,'concat:dist'
-        ,'cssmin:dist'
-        ,'processhtml:dist'
-    ]);
-
-    /**
-     * Task: grunt server:preview
-     * Load a Node.js Connect server with the root folder pointed
-     * at the preview directory.  This server is configured to
-     * work with the LiveReload capabilities of Grunt Watch.
-     * Used for previewing the source files during development.
-     */
-    grunt.registerTask('server:preview', ['preview', 'connect:preview']);
-
-    /**
-     * Task: grunt server:dist
-     * Load a Node.js Connect server with the root folder pointed
-     * at the dist directory.  LiveReload will not be enabled.
-     * Used for reviewing the final dist files before delivery.
-     */
-    grunt.registerTask('server:dist', ['dist', 'connect:dist']);
-
-
-    grunt.registerTask('default', 'preview');
+    grunt.registerTask('default', 'concurrent:watchserver');
 
     /**
      * *************************************
@@ -108,23 +67,7 @@ module.exports = function (grunt) {
         pkg: grunt.file.readJSON('package.json'),
 
         concurrent: {
-            preview: ['watch', 'shell:server']
-        }
-
-        /**
-         * Bower-task: copies Bower installed dependencies into the
-         * target directory, in this case, our vendor source.
-         */
-        ,bower: {
-            install: {
-                options: {
-                    targetDir: 'source/assets/vendor/',
-                    install: false,
-                    verbose: true,
-                    cleanTargetDir: true,
-                    cleanBowerDir: false
-                }
-            }
+            watchserver: ['watch', 'shell:server']
         }
 
         /**
@@ -150,7 +93,7 @@ module.exports = function (grunt) {
             },
             less: {
                 files: ['source/assets/less/*.less'],
-                tasks: ['less:preview']
+                tasks: ['less:public']
             },
             js: {
                 files: ['source/assets/js/**/*.js'],
@@ -171,41 +114,13 @@ module.exports = function (grunt) {
         }
 
         /**
-         * Contrib-connect: Node.js based web server, used for previewing
-         * the frontend code in a simple server environment.  Allows file
-         * paths to be declared as absolute if necessary.
-         */
-        ,connect: {
-            preview: {
-                options: {
-                    port: 9090,
-                    hostname: '*',
-                    keepalive: true,
-                    livereload: true,
-                    base: 'public/',
-                    open: true
-                }
-            }
-            ,dist: {
-                options: {
-                    port: 9091,
-                    hostname: '*',
-                    keepalive: true,
-                    base: 'dist/'
-                }
-            }
-        }
-
-        /**
          * Contrib-clean: Deletes directories.
          */
         ,clean: {
             options: { force: true },
-            preview: {
+            public: {
                 src: [
-                    'public/assets',
-                    'public/posts',
-                    'public/tag'
+                    'public/**/*'
                 ]
             }
             ,pictures: {
@@ -221,7 +136,7 @@ module.exports = function (grunt) {
          * them in a specified destination directory.
          */
         ,less: {
-            preview: {
+            public: {
                 files: [{
                     expand: true,
                     cwd: 'source/assets/less/',
@@ -310,23 +225,14 @@ module.exports = function (grunt) {
                         dest: 'source/'
                 }]
             },
-            preview: {
+            public: {
                 files: [{
                         expand: true,
                         cwd: 'public/',
                         src: ['**/*.html', '**/*.css', '**/*.js'],
                         dest: 'public/'
                 }]
-            },
-            dist: {
-                files: [{
-                        expand: true,
-                        cwd: 'dist/',
-                        src: ['**/*.html', '**/*.css', '**/*.js'],
-                        dest: 'dist/'
-                }]
             }
-
         }
 
         /**
