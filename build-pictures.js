@@ -1,10 +1,14 @@
 var Metalsmith = require('metalsmith');
+var templates = require('metalsmith-templates');
+var markdown = require('metalsmith-markdown');
+var ignore = require('metalsmith-ignore');
 var image = require('easyimage');
 var async = require('async');
 var path = require('path');
 var fs = require('fs');
 
 var resizeQueue = [];
+var pictureData = [];
 var dataFile = './public/pictures/pictures.json';
 var source = 'source/content/pictures/';
 var data = loadData(dataFile);
@@ -21,64 +25,102 @@ var variants = {
 
 if (!fs.existsSync(dest)) { fs.mkdirSync(dest); }
 
+/**
+ * Copy and Resize all pictures
+ */
+
 Metalsmith(__dirname)
     .clean(false)
     .source(source)
     .destination(dest)
-    .use(pathModifier)
-    .build();
+    .use(ignore('**/*.md'))
+    .use(copyAndResizeImages)
+    .build(function(err) {
+        if (err) throw err;
+        buildIndexPage();
+    });
 
-function resizeImages(files) {
 
-    var basename,
-        quality,
-        resize,
-        source,
-        copy,
-        size,
-        dir,
-        ext;
+/**
+ * Create an index.html for pictures
+ */
+function buildIndexPage() {
 
-    for (file in files) {
+    Metalsmith(__dirname)
+        .clean(false)
+        .source(source)
+        .destination(dest)
+        .use(ignore(['**/*.jpg', '**/*.png', '**/*.gif']))
+        .use(appendPictureData)
+        .use(markdown())
+        .use(templates({
+            engine: 'handlebars',
+            default: 'pictures.html',
+            directory: './source/templates'
+        }))
 
-        ext = path.extname(file);
-        dir = path.dirname(file);
-        basename = path.basename(file, ext);
+        .build(function(err) {
+            if (err) throw err;
+        });
+}
 
-        for (variant in variants) {
 
-            resize = variants[variant].split('@');
-            quality = resize[1];
-            size = resize[0];
+function appendPictureData(files, metalsmith, done) {
 
-            copy = dest + dir + '/' + variant + ext;
-            source = dest + file;
-
-            queueResize({
-                src: source,
-                dst: copy,
-                width: size,
-                height: 10000,
-                quality: quality
-            });
-        }
+    if (!pictureData.length) {
+        collectPictureData();
     }
 
-    async.series(resizeQueue);
+    for (file in files) {
+        files[file].pictures = pictureData;
+    }
 
+    // console.log(pictureData);
+    // console.log(files);
+
+    done();
 }
 
-function queueResize(params) {
-    resizeQueue.push(function(callback){
-        image.resize(params).then(function(image) {
-            console.log('Resized', params.width + 'px @', params.quality + '%', params.dst);
-            callback();
+
+function collectPictureData() {
+
+    var pic,
+        ext,
+        dir,
+        file,
+        base,
+        mdate,
+        short;
+
+    var pictures = getFiles('public/pictures');
+
+    for (var i in pictures) {
+
+        pic = pictures[i];
+        ext = path.extname(pic);
+        mdate = getModifiedDate(pic);
+        short = pic.replace('public', '');
+        base = path.basename(pic, ext);
+        dir = path.dirname(short);
+
+        if (!isImage(pic)) { continue; }
+
+        pictureData.push({
+            mdate: mdate,
+            file: short,
+            dir: dir,
+            base: base,
+            ext: ext
         });
-    });
+    }
+
+    return pictureData;
+
 }
 
 
-function pathModifier(files, metalsmith, done) {
+
+function copyAndResizeImages(files, metalsmith, done) {
 
     var copyfiles,
         newlocation,
@@ -115,18 +157,75 @@ function pathModifier(files, metalsmith, done) {
     }
 
     if (copyfiles) {
-        writeData(data, dataFile);
-        metalsmith.write(files, function(){
-            resizeImages(files);
-        });
-    } else {
-        console.log("No new pictures to copy");
-    }
 
-    done();
+        writeData(data, dataFile);
+
+        metalsmith.write(files, function(){
+            resizeImages(files, done);
+        });
+
+    } else {
+
+        console.log("No new pictures to copy");
+        done();
+    }
 
 }
 
+
+function resizeImages(files, done) {
+
+    var basename,
+        quality,
+        resize,
+        source,
+        copy,
+        size,
+        dir,
+        ext;
+
+    for (file in files) {
+
+        ext = path.extname(file);
+        dir = path.dirname(file);
+        basename = path.basename(file, ext);
+
+        for (variant in variants) {
+
+            resize = variants[variant].split('@');
+            quality = resize[1];
+            size = resize[0];
+
+            copy = dest + dir + '/' + variant + ext;
+            source = dest + file;
+
+            queueResize({
+                src: source,
+                dst: copy,
+                width: size,
+                height: 10000,
+                quality: quality
+            });
+        }
+    }
+
+    resizeQueue.push(function(callback){
+        callback();
+        done();
+    });
+
+    async.series(resizeQueue);
+
+}
+
+function queueResize(params) {
+    resizeQueue.push(function(callback){
+        image.resize(params).then(function(image) {
+            console.log('Resized', params.width + 'px @', params.quality + '%', params.dst);
+            callback();
+        });
+    });
+}
 
 
 function getModifiedDate(file) {
@@ -149,4 +248,28 @@ function writeData(data, file) {
           console.log("JSON saved to " + file);
         }
     });
+}
+
+
+function getFiles(dir,files_){
+    files_ = files_ || [];
+    if (typeof files_ === 'undefined') files_=[];
+    var files = fs.readdirSync(dir);
+    for(var i in files){
+        if (!files.hasOwnProperty(i)) continue;
+        var name = dir+'/'+files[i];
+        if (fs.statSync(name).isDirectory()){
+            getFiles(name,files_);
+        } else {
+            files_.push(name);
+        }
+    }
+    return files_;
+}
+
+
+function isImage(filename) {
+    var extension = filename.split('.').pop().toLowerCase();
+    var imageExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+    return imageExtensions.indexOf(extension) > -1;
 }

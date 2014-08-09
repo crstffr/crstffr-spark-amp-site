@@ -44,7 +44,7 @@ module.exports = function (grunt) {
      * Rebuilds the entire site from scratch
      */
     grunt.registerTask('rebuild', [
-        'clean:public'
+        'clean:blog'
         ,'shell:build'
         ,'shell:pictures'
         ,'less:public'
@@ -79,16 +79,12 @@ module.exports = function (grunt) {
                 spawn: false,
                 livereload: true
             },
-            buildjs: {
-                files: ['build-blog.js'],
-                tasks: ['shell:build']
-            },
-            md: {
-                files: ['source/**/*.md'],
-                tasks: ['shell:build']
-            },
-            templates: {
-                files: ['source/**/*.html'],
+            blog: {
+                files: [
+                    'build-blog.js',
+                    'source/**/*.html',
+                    'source/content/articles/*.md'
+                ],
                 tasks: ['shell:build']
             },
             less: {
@@ -108,7 +104,10 @@ module.exports = function (grunt) {
                 tasks: ['copy:vendor']
             },
             pictures: {
-                files: ['source/content/pictures/**/*'],
+                files: [
+                    'source/templates/pictures.html',
+                    'source/content/pictures/**/*'
+                ],
                 tasks: ['shell:pictures']
             }
         }
@@ -118,7 +117,7 @@ module.exports = function (grunt) {
          */
         ,clean: {
             options: { force: true },
-            public: {
+            all: {
                 src: [
                     'public/**/*'
                 ]
@@ -126,8 +125,12 @@ module.exports = function (grunt) {
             ,pictures: {
                 src: ['public/pictures']
             }
-            ,dist: {
-                src: ['dist']
+            ,blog: {
+                src: [
+                    'public/articles',
+                    'public/posts',
+                    'public/tag'
+                ]
             }
         }
 

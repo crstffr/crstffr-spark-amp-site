@@ -167,7 +167,7 @@ function blogTagLists(files, metalsmith, done) {
 
 function filterImages(filename, properties, index) {
     var extension = filename.split('.').pop().toLowerCase();
-    var imageExtensions = [ 'jpg', 'jpeg', 'png' ];
+    var imageExtensions = ['jpg', 'jpeg', 'png', 'gif'];
     var notAnImage = imageExtensions.indexOf(extension) == -1;
     return notAnImage;
 }
