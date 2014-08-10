@@ -169,7 +169,7 @@ module.exports = function (grunt) {
                 {
                     expand: true,
                     cwd: 'source/assets/js/',
-                    src: ['**'],
+                    src: ['**/*'],
                     dest: 'public/assets/js/'
                 }
             ]},

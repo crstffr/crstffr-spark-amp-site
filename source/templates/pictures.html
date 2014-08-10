@@ -78,16 +78,25 @@
         <link href='//fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
         <link href='//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css' rel='stylesheet' type='text/css'>
 
+        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.isotope/2.0.0/isotope.pkgd.min.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/zepto/1.1.3/zepto.js"></script>
+
 
         <!-- build:remove:dist -->
         <script src="//athena:35729/livereload.js"></script>
         <!-- endbuild -->
 
-        <!-- build:js /assets/js/app.min.js -->
-        <script src="/assets/js/app/app.js"></script>
+        <!-- build:js /assets/js/pictures.min.js -->
+        <script src="/assets/js/vendor/js-signals.min.js"></script>
+        <script src="/assets/js/vendor/hasher.min.js"></script>
+        <script src="/assets/js/app/utils.js"></script>
+        <script src="/assets/js/app/pictures.js"></script>
         <!-- endbuild -->
+
+        <script>
+            $(function(){ Pictures.init(); });
+        </script>
 
         <!-- build:css /assets/css/concat.min.css -->
         <link rel="stylesheet" href="/assets/css/normalize.css">
@@ -102,14 +111,45 @@
     </head>
     <body class="theme-light">
 
-    {{#each pictures }}
+        <div class="js-picturedata">
+            {{#each pictures }}
+            <span data-mdate="{{mdate}}"
+                  data-dir="{{dir}}"
+                  data-base="{{base}}"
+                  data-sizes="{{sizes}}"
+                  data-tags="{{tags}}"
+                  data-ext="{{ext}}"></span>
+            {{/each}}
+        </div>
 
-        <p>{{file}}</p>
+        <div class="picture-index-container">
+            <div class="filter-row clearfix">
+                <div class="filters js-filters js-info-hide"></div>
+                <div class="filters js-info-show hide">
+                    <a href="" class="btn btn-primary js-back">Go Back</a>
+                </div>
+                <!-- <div class="search"><input type="text" class="js-search"></div> -->
+            </div>
+            <div class="js-picture-container"></div>
+            <div class="picture-info-panel js-picture-info-panel clearfix hide">
 
-    {{/each}}
-
-        <div id="main" class="js-min-height">
-
+                <p>
+                    <label>File</label>
+                    <span data-bind="base"></span>
+                </p>
+                <p>
+                    <label>Small</label>
+                    <input type="text" data-value="small">
+                </p>
+                <p>
+                    <label>Medium</label>
+                    <input type="text" data-value="medium">
+                </p>
+                <p>
+                    <label>Large</label>
+                    <input type="text" data-value="large">
+                </p>
+            </div>
         </div>
 
     </body>

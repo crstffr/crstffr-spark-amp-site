@@ -58,9 +58,9 @@ function buildIndexPage() {
             default: 'pictures.html',
             directory: './source/templates'
         }))
-
         .build(function(err) {
             if (err) throw err;
+            console.log("Picture index built");
         });
 }
 
@@ -87,10 +87,14 @@ function collectPictureData() {
     var pic,
         ext,
         dir,
+        url,
         file,
         base,
         mdate,
-        short;
+        short,
+        size,
+        tags,
+        data = {};
 
     var pictures = getFiles('public/pictures');
 
@@ -99,19 +103,37 @@ function collectPictureData() {
         pic = pictures[i];
         ext = path.extname(pic);
         mdate = getModifiedDate(pic);
-        short = pic.replace('public', '');
-        base = path.basename(pic, ext);
-        dir = path.dirname(short);
+        url = pic.replace('public', '');
+        dir = path.dirname(url);
+        base = dir.split('/').pop();
+        file = path.basename(pic, ext);
+        size = file.split('-').pop();
+        tags = dir.split('/').slice(2,-1);
 
         if (!isImage(pic)) { continue; }
 
-        pictureData.push({
-            mdate: mdate,
-            file: short,
-            dir: dir,
-            base: base,
-            ext: ext
-        });
+        if (!data[base]) {
+
+            data[base] = {
+                mdate: mdate,
+                dir: dir,
+                base: base,
+                sizes: [size],
+                ext: ext,
+                tags: tags
+            }
+
+        } else {
+
+            data[base].sizes.push(size);
+
+        }
+
+
+    }
+
+    for (var i in data) {
+        pictureData.push(data[i]);
     }
 
     return pictureData;
@@ -145,7 +167,7 @@ function copyAndResizeImages(files, metalsmith, done) {
         if (!exists || !data[file] || data[file].modified !== mdate) {
 
             copyfiles = true;
-            var original = newlocation + 'original' + ext;
+            var original = newlocation + basename + '-full' + ext;
             files[original] = thisfile;
 
             data[file] = { modified: mdate };
@@ -188,7 +210,7 @@ function resizeImages(files, done) {
 
         ext = path.extname(file);
         dir = path.dirname(file);
-        basename = path.basename(file, ext);
+        basename = dir.split('/').pop();
 
         for (variant in variants) {
 
@@ -196,7 +218,7 @@ function resizeImages(files, done) {
             quality = resize[1];
             size = resize[0];
 
-            copy = dest + dir + '/' + variant + ext;
+            copy = dest + dir + '/' + basename + '-' + variant + ext;
             source = dest + file;
 
             queueResize({
