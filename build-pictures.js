@@ -114,10 +114,6 @@ function appendPictureData(files, metalsmith, done) {
 
 function getPublicPictureData() {
 
-    if (pictureData.length) {
-        return pictureData;
-    }
-
     var pic, ext, dir, url, file, base,
         mdate, short, size, tags, src,
         data = {}, output = [],
@@ -166,7 +162,6 @@ function getPublicPictureData() {
         output.push(data[i]);
     }
 
-    pictureData = output;
     return output;
 
 }
