@@ -110,6 +110,8 @@
                     .appendTo($wrapper)
                     .on('load', function(e) {
                         _loaded++;
+                        $wrapper.width($(this).width());
+                        $wrapper.height($(this).height());
                         if (_loaded === _count) {
                             _initGrid();
                         }
@@ -152,7 +154,11 @@
         function _resetFilters() {
 
             $filters.removeClass(_classes.btnOn);
-            $container.isotope({filter: '*'});
+
+            if ($container.data('inited')) {
+                $container.isotope({filter: '*'});
+            }
+
             hasher.setHash('');
 
         }
@@ -161,7 +167,10 @@
 
             var $btn = $filters.filter('[data-value="' + val + '"]');
             _toggleFilterButton($btn);
-            $container.isotope({filter: '.' + val});
+
+            if ($container.data('inited')) {
+                $container.isotope({filter: '.' + val});
+            }
 
         }
 
@@ -233,13 +242,19 @@
          * @private
          */
         function _initGrid() {
+
             $container.isotope({
                 layoutMode: 'masonry',
                 isInitLayout: false
             });
 
             $container.isotope('on', 'layoutComplete', _layoutComplete);
-            $container.isotope();
+
+            setTimeout(function(){
+                $container.isotope();
+            }, 200);
+
+            $container.data('inited', true);
         }
 
     }

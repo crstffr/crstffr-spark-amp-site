@@ -43,6 +43,7 @@
     "metalsmith-markdown": "^0.2.1",
     "metalsmith-more": "~0.1.0",
     "metalsmith-permalinks": "^0.3.0",
-    "metalsmith-templates": "~0.5.2"
+    "metalsmith-templates": "~0.5.2",
+    "rimraf": "~2.2.8"
   }
 }

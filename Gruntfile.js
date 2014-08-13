@@ -53,7 +53,7 @@ module.exports = function (grunt) {
         ,'copy:vendor'
     ]);
 
-    grunt.registerTask('default', 'concurrent:watchserver');
+    grunt.registerTask('default', 'watch');
 
     /**
      * *************************************

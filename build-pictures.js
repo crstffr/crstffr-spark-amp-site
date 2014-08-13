@@ -2,7 +2,8 @@ var Metalsmith = require('metalsmith');
 var templates = require('metalsmith-templates');
 var markdown = require('metalsmith-markdown');
 var ignore = require('metalsmith-ignore');
-var image = require('easyimage');
+var easyimage = require('easyimage');
+var rmdir = require('rimraf');
 var async = require('async');
 var path = require('path');
 var fs = require('fs');
@@ -17,10 +18,9 @@ var dest = 'public/pictures/';
 // Max width @ quality level (1-100)
 
 var variants = {
-    large: '800@85',
-    medium: '500@80',
-    small: '200@75',
-    tiny: '60@55'
+    large: '1000@95',
+    medium: '500@85',
+    small: '200@75'
 };
 
 if (!fs.existsSync(dest)) { fs.mkdirSync(dest); }
@@ -37,6 +37,7 @@ Metalsmith(__dirname)
     .use(copyAndResizeImages)
     .build(function(err) {
         if (err) throw err;
+        removeDeletedFiles();
         buildIndexPage();
     });
 
@@ -65,42 +66,67 @@ function buildIndexPage() {
 }
 
 
-function appendPictureData(files, metalsmith, done) {
+function removeDeletedFiles() {
 
-    if (!pictureData.length) {
-        collectPictureData();
+    var i, img, dir, file, changes;
+
+    var publicFiles = getPublicPictureData();
+
+    // Clean the JSON data from any files that are no longer in source
+
+    for (img in data) {
+        if (!fs.existsSync(img)) {
+            console.log('DELETE', img, 'from JSON data');
+            delete data[img];
+            changes = true;
+        }
     }
 
-    for (file in files) {
-        files[file].pictures = pictureData;
+    // Remove folders from public that are no longer in the source
+
+    for (i in publicFiles) {
+
+        img = publicFiles[i];
+
+        if (!fs.existsSync(img.src)) {
+            dir = 'public' + img.dir;
+            console.log('DELETE', dir, 'from public folder');
+            rmdir(dir, function(){});
+            changes = true;
+        }
+
     }
 
-    // console.log(pictureData);
-    // console.log(files);
+    if (changes) {
+        writeData(data, dataFile);
+    } else {
+        console.log('No old files to cleanup');
+    }
 
-    done();
 }
 
+function appendPictureData(files, metalsmith, done) {
 
-function collectPictureData() {
+    files['index.md'].pictures = getPublicPictureData();
+    done();
 
-    var pic,
-        ext,
-        dir,
-        url,
-        file,
-        base,
-        mdate,
-        short,
-        size,
-        tags,
-        data = {};
+}
 
-    var pictures = getFiles('public/pictures');
+function getPublicPictureData() {
+
+    if (pictureData.length) {
+        return pictureData;
+    }
+
+    var pic, ext, dir, url, file, base,
+        mdate, short, size, tags, src,
+        data = {}, output = [],
+        pictures = getFiles(dest);
 
     for (var i in pictures) {
 
         pic = pictures[i];
+        pic = pic.replace('//', '/');
         ext = path.extname(pic);
         mdate = getModifiedDate(pic);
         url = pic.replace('public', '');
@@ -110,12 +136,17 @@ function collectPictureData() {
         size = file.split('-').pop();
         tags = dir.split('/').slice(2,-1);
 
+        src = source.replace('pictures/', '') + dir + ext;
+        src = src.replace('//', '/');
+
         if (!isImage(pic)) { continue; }
 
-        if (!data[base]) {
+        if (!data[dir]) {
 
-            data[base] = {
+            data[dir] = {
                 mdate: mdate,
+                src: src,
+                pic: pic,
                 dir: dir,
                 base: base,
                 sizes: [size],
@@ -125,18 +156,18 @@ function collectPictureData() {
 
         } else {
 
-            data[base].sizes.push(size);
+            data[dir].sizes.push(size);
 
         }
-
 
     }
 
     for (var i in data) {
-        pictureData.push(data[i]);
+        output.push(data[i]);
     }
 
-    return pictureData;
+    pictureData = output;
+    return output;
 
 }
 
@@ -144,19 +175,15 @@ function collectPictureData() {
 
 function copyAndResizeImages(files, metalsmith, done) {
 
-    var copyfiles,
-        newlocation,
-        thisfile,
-        basename,
-        exists,
-        mdate,
-        dir,
-        ext;
+    var copyfiles, newlocation,
+        thisfile, basename,
+        exists, mdate,
+        dir, src, ext;
 
     for (file in files) {
 
         thisfile = files[file];
-
+        src = source + file;
         ext = path.extname(file);
         dir = path.dirname(file);
         mdate = getModifiedDate(source + file);
@@ -164,15 +191,12 @@ function copyAndResizeImages(files, metalsmith, done) {
         newlocation = dir + '/' + basename + '/';
         exists = fs.existsSync(dest + newlocation);
 
-        if (!exists || !data[file] || data[file].modified !== mdate) {
-
+        if (!exists || !data[src] || data[src].modified !== mdate) {
             copyfiles = true;
             var original = newlocation + basename + '-full' + ext;
             files[original] = thisfile;
-
-            data[file] = { modified: mdate };
+            data[src] = { modified: mdate };
             console.log("Copying: ", newlocation);
-
         }
 
         delete files[file];
@@ -189,7 +213,9 @@ function copyAndResizeImages(files, metalsmith, done) {
     } else {
 
         console.log("No new pictures to copy");
+
         done();
+
     }
 
 }
@@ -242,7 +268,7 @@ function resizeImages(files, done) {
 
 function queueResize(params) {
     resizeQueue.push(function(callback){
-        image.resize(params).then(function(image) {
+        easyimage.resize(params).then(function(image) {
             console.log('Resized', params.width + 'px @', params.quality + '%', params.dst);
             callback();
         });
