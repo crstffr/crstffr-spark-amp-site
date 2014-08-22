@@ -83,7 +83,7 @@ module.exports = function (grunt) {
                 files: [
                     'build-blog.js',
                     'source/**/*.html',
-                    'source/content/articles/*.md'
+                    'source/content/articles/**/*.md'
                 ],
                 tasks: ['shell:build']
             },

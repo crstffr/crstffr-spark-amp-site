@@ -14,7 +14,7 @@ Prior to this endeavor, I had just finished building a linux-based NAS server fo
 
 I had just started playing with my first `Raspberry Pi` and was looking for a project to use it on.
 
-![](/pictures/2012/sketch-rpi-speakers/medium.jpg)
+![](/pictures/sketches/sketch-rpi-speakers/sketch-rpi-speakers-medium.jpg)
 
 <!-- more -->
 

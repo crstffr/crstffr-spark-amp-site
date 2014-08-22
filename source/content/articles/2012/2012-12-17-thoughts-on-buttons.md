@@ -9,7 +9,7 @@ tags:
 
 I want to make use of the RaspberryPi GPIO for some buttons!
 
-![](/pictures/2012/colored-buttons/medium.jpg)
+![](/pictures/2012/colored-buttons/colored-buttons-medium.jpg)
 
 The buttons could:
 

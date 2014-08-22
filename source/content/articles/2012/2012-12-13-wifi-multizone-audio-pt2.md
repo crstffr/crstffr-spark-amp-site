@@ -10,7 +10,7 @@ tags:
 
 I've made some progress in the past few days and want to recap what's currently setup and what will need to be figured out before moving forward.
 
-![](/pictures/2012/audio-server-plus-tranmsitter/medium.jpg)
+![](/pictures/2012/audio-server-plus-transmitter/audio-server-plus-transmitter-medium.jpg)
 
 <!-- more -->
 

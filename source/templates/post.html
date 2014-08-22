@@ -28,23 +28,13 @@
 
             {{#if next}}
             <div class="section">
-                <h4><i class="fa fa-fw fa-chevron-circle-right"></i>Up Next: <a href="/{{next.path}}">{{next.title}}</a></h4>
+                <h4><i class="fa fa-fw fa-chevron-circle-right"></i>Up Next: <a href="/{{next.path}}/">{{next.title}}</a></h4>
             </div>
             {{/if}}
 
-            <!--
-            <div class="section">
-                <h4><i class="fa fa-fw fa-history"></i>Related Posts</h4>
-                <ul>
-                    <li><a href="#">Some sort of post here</a></li>
-                    <li><a href="#">Another post that's related</a></li>
-                </ul>
-            </div>
-            -->
-
             {{#if prev}}
                 <div class="section">
-                    <h4><i class="fa fa-fw fa-chevron-circle-left"></i>Previously: <a href="/{{prev.path}}">{{prev.title}}</a></h4>
+                    <h4><i class="fa fa-fw fa-chevron-circle-left"></i>Previously: <a href="/{{prev.path}}/">{{prev.title}}</a></h4>
                 </div>
             {{/if}}
 

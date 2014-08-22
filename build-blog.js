@@ -29,7 +29,7 @@ Metalsmith(__dirname)
     .use(ignore('pictures/**/*'))
     .use(collections({
         posts: {
-            pattern: 'articles/*',
+            pattern: 'articles/**/*',
             sortBy: 'date',
             reverse: true
         }
@@ -42,7 +42,7 @@ Metalsmith(__dirname)
     .use(markdown())
     .use(more())
     .use(excerpts())
-    .use(branch('articles/*')
+    .use(branch('articles/**/*')
         .use(permalinks({
             pattern: 'posts/:date/:title',
             date: 'YYYY',
