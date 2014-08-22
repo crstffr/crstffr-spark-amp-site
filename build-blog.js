@@ -8,6 +8,7 @@ var markdown = require('metalsmith-markdown');
 var excerpts = require('metalsmith-excerpts');
 var branch = require('metalsmith-branch');
 var ignore = require('metalsmith-ignore');
+var drafts = require('metalsmith-drafts');
 var more = require('./modules/more-or-less');
 
 var options = {
@@ -78,9 +79,7 @@ function buildDate(files, metalsmith, done) {
 function blogNextPosts(files, metalsmith, done) {
 
     var file,
-        post,
-        next,
-        prev;
+        post;
 
     // Swap the Prev/Next because when the collection is sorted
     // in reverse order, they don't make sense.  This rights it.
@@ -88,11 +87,8 @@ function blogNextPosts(files, metalsmith, done) {
     for (file in files) {
 
         post = files[file];
-        next = post.previous;
-        prev = post.next;
-
-        files[file].next = next;
-        files[file].prev = prev;
+        files[file].prev = post.next;
+        files[file].next = post.previous
 
     }
 
@@ -102,11 +98,12 @@ function blogNextPosts(files, metalsmith, done) {
 
 
 function blogIndexList(files, metalsmith, done) {
+
     var index = files['index.md'],
         posts = metalsmith.data.posts,
         perPage = options.perPage;
 
-    index.posts = posts.slice(0,perPage);
+    index.posts = posts.slice(0, perPage);
     index.currentPage = 1;
     index.numPages = Math.ceil(posts.length / perPage);
     index.pagination = [];

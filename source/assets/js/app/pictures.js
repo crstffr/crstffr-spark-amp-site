@@ -18,6 +18,7 @@
             btnOff: 'btn'
         };
 
+        var _urlprefix = 'http://draft.smartamp.brace.io';
         var _pictures = {};
         var _history = [];
         var _filters = [];
@@ -222,11 +223,9 @@
             $infopanel.find('[data-value]').each(function(i, e){
                 var key = $(e).attr('data-value');
                 if (data[key]) {
-                    $(e).val(data[key]);
+                    $(e).val(_urlprefix + data[key]);
                 }
             });
-
-
 
         }
 

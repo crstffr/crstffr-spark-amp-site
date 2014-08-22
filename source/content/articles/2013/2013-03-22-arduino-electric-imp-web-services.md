@@ -1,6 +1,6 @@
 ---
 title: Arduino, Electric Imp, and Web Services
-date: 2013-03-30
+date: 2013-03-22
 tags:
     - hardware
     - arduino
@@ -8,11 +8,11 @@ tags:
     - pics
 ---
 
-![](/pictures/2013/arduino-pir-imp-relay-1/arduino-pir-imp-relay-1-medium.jpg)
+![](http://draft.smartamp.brace.io/pictures/2013/electric-imp-and-shield/electric-imp-and-shield-medium.jpg) 
 
-Having the radios connected to the net, I should have control over each of the devices and their individual states.
+With the Motion Radios connected to the internet, I should be able to control each of the devices and their individual states.
 
-### Actions From Radio
+### Information From Radio
 1. Power status (on/off)
 1. Volume level
 1. Time to shut off
@@ -28,7 +28,7 @@ Each ```Electric Imp``` has it's own unique URL to POST data to.  In order to se
 
 ### Progress Update
 
-![](/pictures/sketches/sketch-arduino-imp-uart/sketch-arduino-imp-uart-medium.jpg)
+![](http://draft.smartamp.brace.io/pictures/sketches/sketch-arduino-imp-uart/sketch-arduino-imp-uart-medium.jpg)
 
 I figured out the software serial communication between the Electric Imp and the Arduino.  I am currently able to pass whole strings from the internet to the Imp down to the Arduino and back again.  This means I have a way to trigger the on/off state of the radio device from a webpage loaded on my phone.  Basic HTTP POST's.
 

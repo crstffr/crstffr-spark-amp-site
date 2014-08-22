@@ -82,11 +82,6 @@
         <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.isotope/2.0.0/isotope.pkgd.min.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js"></script>
 
-
-        <!-- build:remove:dist -->
-        <script src="//athena:35729/livereload.js"></script>
-        <!-- endbuild -->
-
         <!-- build:js /assets/js/pictures.min.js -->
         <script src="/assets/js/vendor/js-signals.min.js"></script>
         <script src="/assets/js/vendor/hasher.min.js"></script>
@@ -141,15 +136,15 @@
                 </p>
                 <p>
                     <label>Small</label>
-                    <input type="text" data-value="small">
+                    <input type="text" data-value="small" onClick="this.select();">
                 </p>
                 <p>
                     <label>Medium</label>
-                    <input type="text" data-value="medium">
+                    <input type="text" data-value="medium" onClick="this.select();">
                 </p>
                 <p>
                     <label>Large</label>
-                    <input type="text" data-value="large">
+                    <input type="text" data-value="large" onClick="this.select();">
                 </p>
             </div>
         </div>
