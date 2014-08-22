@@ -1,5 +1,5 @@
 ---
-title: Etching a Circuit Board 
+title: Etching the Arduino Shield PCB 
 date: 2013-04-02
 tags:  
     - circuits
@@ -8,3 +8,4 @@ tags:
     - pcb
 ---
 
+Soon...
