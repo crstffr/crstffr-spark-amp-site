@@ -1,6 +1,5 @@
 (function() {
 
-
     function Pictures() {
 
         var _self = this;
@@ -92,7 +91,7 @@
                 var $wrapper = $('<a class="picture-wrapper"/>');
 
                 var picture = {
-                    mdate: $e.data('mdate'),
+                    mdate: (new Date($e.data('mdate'))).getTime(),
                     dir: $e.data('dir'),
                     base: $e.data('base'),
                     ext: $e.data('ext'),
@@ -122,7 +121,8 @@
                         .addClass(picture.tags.join(' '))
                         .attr('href', '#/' + picture.base)
                         .appendTo($container)
-                        .data('data', picture);
+                        .data('data', picture)
+                        .attr('data-date', picture.mdate);
 
             });
 
@@ -244,7 +244,12 @@
 
             $container.isotope({
                 layoutMode: 'masonry',
-                isInitLayout: false
+                sortAscending: false,
+                isInitLayout: false,
+                sortBy: 'date',
+                getSortData: {
+                    date: '[data-date]'
+                }
             });
 
             $container.isotope('on', 'layoutComplete', _layoutComplete);

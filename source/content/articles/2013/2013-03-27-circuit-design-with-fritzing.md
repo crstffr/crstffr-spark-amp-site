@@ -23,7 +23,7 @@ What is really neat is that both [Sparkfun](https://github.com/sparkfun/Fritzing
 
 Early on in this experiment I wanted to consolidate some components so that they were more portable, and did not require so many jumper wires.  So I used Fritzing to mock up how I could combine some parts onto a small proto-board.
 
-I had soldered male headers to all of the breakout boards and wanted to plug them into female headers so that the they could be easily removed if necessary.  
+I soldered male headers to all of the breakout boards and want to plug them into female headers so that the they can be easily removed if necessary.  
 
 This module board combines both the `Si4703 FM Tuner` board and the `Realtime Clock` board onto one proto-board, with a 5-pin connector.  Red wires represent +voltage, black wires represent ground, blue and yellow wires represent serial lines. 
 

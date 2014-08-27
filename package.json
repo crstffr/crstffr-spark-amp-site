@@ -45,6 +45,10 @@
     "metalsmith-more": "~0.1.0",
     "metalsmith-permalinks": "^0.3.0",
     "metalsmith-templates": "~0.5.2",
-    "rimraf": "~2.2.8"
+    "rimraf": "~2.2.8",
+    "gaze": "~0.6.4",
+    "firebase": "~1.0.21",
+    "rsvp": "~3.0.13",
+    "recursive-readdir": "~1.2.0"
   }
 }
