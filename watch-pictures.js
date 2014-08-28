@@ -65,30 +65,34 @@ process.on('uncaughtException', function ( err ) {
 
         var srcToFB = new RSVP.Promise(function(resolve, reject) {
 
-            var i = 0;
-            var count = results.srcPics.length;
+            // Loop over each of the source pictures, checking for
+            // values in Firebase.  If there is no data, then collect
+            // it and set it into the database.
 
             results.srcPics.forEach(function(picData) {
 
-                var fbImg = _fb.child(picData.id);
+                var imgRef = _fb.child(picData.id);
 
-                fbImg.once('value', function(snapshot) {
+                imgRef.once('value', function(snapshot) {
 
-                    i++;
+                    var data = snapshot.val();
 
-                    if (!snapshot.val()) {
+                    if (!data) {
 
                         // Get information about the image and when we
                         // have it, set the data into firebase.
 
                         easyimg.info(picData.file).then(function(info) {
-                            fbImg.set(picData);
-                            fbImg.update(info);
-                            fbImg.update({loading: 1, name: null});
+                            imgRef.set(info);
+                            imgRef.update(picData);
+                            imgRef.update({loading: 1});
                         });
 
                         _copyImage(picData);
+
                     }
+
+
                 });
             });
         });
@@ -162,6 +166,7 @@ process.on('uncaughtException', function ( err ) {
                     out.push({
                         id: id,
                         url: url,
+                        name: path.basename(file),
                         base: path.basename(file, ext),
                         time: _getModifiedDate(file),
                         file: file,
