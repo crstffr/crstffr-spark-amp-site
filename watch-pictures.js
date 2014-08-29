@@ -1,37 +1,26 @@
-var RSVP = require('rsvp');
+var LocalStuff = require('./modules/LocalStuff');
+var CloudStuff = require('./modules/CloudStuff');
+var DataStuff = require('./modules/DataStuff');
+var Logger = require('./modules/Logger');
 var Firebase = require('firebase');
-var recursive = require('recursive-readdir');
 var easyimg = require('easyimage');
-var rmdir = require('rimraf');
-var async = require('async');
-var path = require('path');
+var config = require('./config');
+var RSVP = require('rsvp');
 var gaze = require('gaze');
-var fs = require('fs');
 
-process.on('uncaughtException', function ( err ) {
-    console.error('An uncaughtException was found, the program will end.');
+process.on('uncaughtException', function(e) {
+    console.error('ERROR: ', e);
     process.exit(1);
 });
 
 (function(){
 
-    var _cfg = {
-        paths: {
-            src: 'source/content/pictures/',
-            dst: 'temp/pictures/'
-        },
-        formats: [
-            '.jpg', '.jpeg',
-            '.png', '.gif'
-        ],
-        firebase: {
-            root: 'https://brace-images.firebaseio.com/smartamp/'
-        }
-    };
-
     var _fb;
     var _data;
     var _pics;
+    var _cloud;
+    var _local;
+    var _logger;
 
     _init();
 
@@ -41,13 +30,30 @@ process.on('uncaughtException', function ( err ) {
      */
     function _init() {
 
-        _fb = new Firebase(_cfg.firebase.root);
+        _logger = new Logger(config.sitename + '-pictures');
+
+        _logger.info('This is info');
+        _logger.warn('This is warn');
+        _logger.error('This is error');
+
+        _fb = new Firebase(config.data.firebase.root + config.sitename);
+
+        _data = new DataStuff(config.sitename, config.data, _logger);
+        _cloud = new CloudStuff(config.sitename, config.cloud, _logger);
+        _local = new LocalStuff(config.sitename, config.local, _logger);
 
         RSVP.hash({
             data: _getData(),
-            srcPics: _getPics(_cfg.paths.src),
-            dstPics: _getPics(_cfg.paths.dst)
+            local: _local.fetch(),
+            cloud: _cloud.fetch()
         }).then(_syncLocations);
+
+
+        _cloud.fetch().then(function(files){
+            console.log('Cloud files', files.length);
+        }).catch(function(error){
+            console.log('Cant fetch files:', error.message);
+        });
 
     }
 
@@ -65,35 +71,51 @@ process.on('uncaughtException', function ( err ) {
 
         var srcToFB = new RSVP.Promise(function(resolve, reject) {
 
-            // Loop over each of the source pictures, checking for
+            // Loop over each of the local source pictures, checking for
             // values in Firebase.  If there is no data, then collect
             // it and set it into the database.
 
-            results.srcPics.forEach(function(picData) {
+            results.local.forEach(function(picData) {
 
-                var imgRef = _fb.child(picData.id);
+                try {
 
-                imgRef.once('value', function(snapshot) {
+                    var imgRef = _fb.child(picData.id);
 
-                    var data = snapshot.val();
+                    imgRef.once('value', function(snapshot) {
 
-                    if (!data) {
+                        var data = snapshot.val();
 
-                        // Get information about the image and when we
-                        // have it, set the data into firebase.
+                        if (!data) {
 
-                        easyimg.info(picData.file).then(function(info) {
-                            imgRef.set(info);
-                            imgRef.update(picData);
-                            imgRef.update({loading: 1});
-                        });
+                            // Get information about the image and when we
+                            // have it, set the data into firebase.
 
-                        _copyImage(picData);
+                            easyimg.info(picData.file).then(function(info) {
+                                imgRef.set({local: info});
+                                imgRef.update({local: picData});
+                            });
 
-                    }
+                            // Now upload the image to the Cloud
+
+                            _cloud.upload(picData).then(function(response){
+
+                                console.log('Success uploading', picData.id);
+                                imgRef.update({cloud: response});
+
+                            }).catch(function(error){
+
+                                console.log('Error uploading', picData.id, error);
+                                imgRef.remove();
+
+                            })
 
 
-                });
+                        }
+                    });
+
+                } catch(e) {
+                    console.log('ERROR: ', e);
+                }
             });
         });
 
@@ -111,17 +133,6 @@ process.on('uncaughtException', function ( err ) {
     }
 
 
-
-    function _copyImage(picData) {
-
-        console.log('supposed to copy', picData.id);
-
-
-    }
-
-
-
-
     /**
      *
      * @return {RSVP.Promise}
@@ -134,72 +145,6 @@ process.on('uncaughtException', function ( err ) {
             });
         });
     }
-
-
-    /**
-     *
-     * @return {RSVP.Promise}
-     * @private
-     */
-    function _getPics(where) {
-
-        return (new RSVP.Promise(function(resolve, reject){
-
-            recursive(where, function(err, files){
-                resolve(files);
-            });
-
-        })).then(function(files){
-
-            files = files || [];
-            var out = [];
-
-            files.forEach(function(file, i){
-
-                var ext = path.extname(file);
-
-                if (_isImage(file, ext)) {
-
-                    var url = file.replace(where, '');
-                    var id = url.replace('.', '-');
-
-                    out.push({
-                        id: id,
-                        url: url,
-                        name: path.basename(file),
-                        base: path.basename(file, ext),
-                        time: _getModifiedDate(file),
-                        file: file,
-                        ext: ext
-                    });
-                }
-            });
-
-            return out;
-        });
-    }
-
-
-    /**
-     *
-     * @param file
-     * @return {Boolean}
-     * @private
-     */
-    function _isImage(filepath, ext) {
-        ext = ext || path.extname(filepath);
-        return _cfg.formats.indexOf(ext) > -1;
-    }
-
-    /**
-     *
-     * @param file
-     * @return {*}
-     */
-    function _getModifiedDate(filepath) {
-        return (new Date(fs.statSync(filepath).mtime.toString())).getTime();
-    }
-
 
 })();
 
