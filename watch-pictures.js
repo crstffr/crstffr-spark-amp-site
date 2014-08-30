@@ -156,7 +156,7 @@ process.on('uncaughtException', function(e) {
         });
 
         return results;
-        
+
     }
 
 

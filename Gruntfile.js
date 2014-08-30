@@ -46,7 +46,7 @@ module.exports = function (grunt) {
     grunt.registerTask('rebuild', [
         'clean:blog'
         ,'shell:build'
-        ,'shell:pictures'
+        //,'shell:pictures'
         ,'less:public'
         ,'copy:js'
         ,'copy:img'
@@ -102,13 +102,6 @@ module.exports = function (grunt) {
             img: {
                 files: ['source/assets/vendor/**/*'],
                 tasks: ['copy:vendor']
-            },
-            pictures: {
-                files: [
-                    'source/templates/pictures.html',
-                    'source/content/pictures/**/*'
-                ],
-                tasks: ['shell:pictures']
             }
         }
 
@@ -201,12 +194,13 @@ module.exports = function (grunt) {
                 },
                 command: 'node build-blog.js'
             },
+            /*
             pictures: {
                 options: {
                     stderr: true
                 },
                 command: 'node build-pictures.js'
-            },
+            },*/
             server: {
                 options: {
                     stdout: true,
