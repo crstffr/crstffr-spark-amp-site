@@ -17,7 +17,7 @@ module.exports = function Logger(programName) {
         level: 'debug',
         colorize: true,
         timestamp: function() {
-            return new Date().toLocaleString();
+            return (new Date()).toLocaleString();
         }
     });
 

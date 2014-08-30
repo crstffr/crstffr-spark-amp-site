@@ -6,9 +6,6 @@ var fs = require('fs');
 
 module.exports = function(sitename, config, logger) {
 
-    var CONFIG = config;
-    CONFIG.sitename = sitename;
-
     if (!sitename || sitename === '') {
         throw 'LocalStuff needs to be passed a site name on init';
     }
@@ -20,7 +17,7 @@ module.exports = function(sitename, config, logger) {
      */
     function _fetch(where) {
 
-        where = where || CONFIG.source;
+        where = where || config.source;
 
         return (new RSVP.Promise(function(resolve, reject){
 
@@ -30,43 +27,47 @@ module.exports = function(sitename, config, logger) {
 
         })).then(function(files){
 
-            try {
+            files = files || [];
 
-                files = files || [];
-                var out = [];
+            var out = [];
 
-                files.forEach(function(file, i){
-
-                    var ext = path.extname(file);
-
-                    if (_isImage(file, ext)) {
-
-                        var url = file.replace(where, '');
-                        var dir = path.dirname(url) + '/';
-                        var base = path.basename(file, ext);
-                        var name = path.basename(file);
-                        var time = _getModifiedDate(file);
-                        var id = (dir + base).replace('.', '-');
-
-                        out.push({
-                            id: id,
-                            url: url,
-                            dir: dir,
-                            name: name,
-                            base: base,
-                            time: time,
-                            file: file,
-                            ext: ext
-                        });
-                    }
-                });
-
-            } catch(e) {
-                console.log('ERROR: ', e);
-            }
+            files.forEach(function(file, i){
+                if (_isImage(file)) {
+                    out.push(_getFileData(file));
+                }
+            });
 
             return out;
         });
+    }
+
+
+    /**
+     *
+     * @param file
+     * @return {Object}
+     * @private
+     */
+    function _getFileData(file) {
+
+        var ext = path.extname(file);
+        var url = file.replace(config.source, '');
+        var dir = path.dirname(url) + '/';
+        var base = path.basename(file, ext);
+        var name = path.basename(file);
+        var time = _getModifiedDate(file);
+        var id = (dir + base).replace('.', '-');
+
+        return {
+            id: id,
+            url: url,
+            dir: dir,
+            name: name,
+            base: base,
+            time: time,
+            file: file,
+            ext: ext
+        };
     }
 
 
@@ -78,7 +79,7 @@ module.exports = function(sitename, config, logger) {
      */
     function _isImage(filepath, ext) {
         ext = ext || path.extname(filepath);
-        return CONFIG.formats.indexOf(ext) > -1;
+        return config.formats.indexOf(ext) > -1;
     }
 
     /**
@@ -91,7 +92,8 @@ module.exports = function(sitename, config, logger) {
     }
 
     return {
-        fetch: _fetch
+        fetch: _fetch,
+        getfileData: _getFileData
     }
 
 

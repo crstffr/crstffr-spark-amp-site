@@ -10,7 +10,8 @@ module.exports = {
 
     local: {
         source: 'source/content/pictures/',
-        formats: [ '.jpg', '.jpeg', '.png', '.gif' ]
+        formats: [ '.jpg', '.jpeg', '.png', '.gif' ],
+        watch: ['*', '**/*']
     },
 
     cloud: {

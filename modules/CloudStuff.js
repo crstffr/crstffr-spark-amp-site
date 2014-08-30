@@ -4,14 +4,11 @@ var util = require('util');
 
 module.exports = function(sitename, config, logger) {
 
-    var CONFIG = config;
-    CONFIG.sitename = sitename;
-
     if (!sitename || sitename === '') {
         throw 'CloudStuff needs to be passed a site name on init';
     }
 
-    Cloudinary.config(CONFIG);
+    Cloudinary.config(config);
 
     /**
      *
@@ -27,10 +24,11 @@ module.exports = function(sitename, config, logger) {
             },{
                 max_results: 500,
                 type: 'upload',
-                prefix: CONFIG.sitename
+                prefix: sitename
             });
         });
     }
+
 
     /**
      *
@@ -43,23 +41,23 @@ module.exports = function(sitename, config, logger) {
         return new RSVP.Promise(function(resolve, reject){
 
             if (!fileData.id) {
-                reject('File data does not have an ID');
+                reject('CloudStuff.upload - File data does not have an ID');
                 return false;
             }
 
             if (!fileData.file) {
-                reject('File data does not have a file path');
+                reject('CloudStuff.upload - File data does not have a file path');
                 return false;
             }
 
             Cloudinary.uploader.upload(fileData.file, function(results){
                 (results.error) ? reject(results.error) : resolve(results);
             },{
-                crop: CONFIG.sizes.full.crop,
-                width: CONFIG.sizes.full.width,
-                height: CONFIG.sizes.full.height,
+                crop: config.sizes.full.crop,
+                width: config.sizes.full.width,
+                height: config.sizes.full.height,
                 public_id: _publicId(fileData),
-                eager: [ CONFIG.sizes.thumb ],
+                eager: [ config.sizes.thumb ],
                 invalidate: true,
                 overwrite: true,
                 exif: true
@@ -71,6 +69,7 @@ module.exports = function(sitename, config, logger) {
 
     }
 
+
     /**
      * Generate the public ID for an image, which appends the sitename
      * to the beginning of the image ID.
@@ -80,7 +79,7 @@ module.exports = function(sitename, config, logger) {
      * @private
      */
     function _publicId(fileData) {
-        return CONFIG.sitename + '/' + fileData.id;
+        return sitename + '/' + fileData.id;
     }
 
 
@@ -102,6 +101,7 @@ module.exports = function(sitename, config, logger) {
         });
     }
 
+
     /**
      * Loop over an array of files and upload each one in separate calls.
      * @param arrayOfFiles
@@ -120,6 +120,7 @@ module.exports = function(sitename, config, logger) {
 
         return RSVP.all(promises);
     }
+
 
     /**
      * Loop over an array of files and remove them in one batch call.
@@ -149,10 +150,8 @@ module.exports = function(sitename, config, logger) {
         fetch: _fetch,
         upload: _upload,
         remove: _remove,
-
         uploadFiles: _uploadFiles,
         removeFiles: _removeFiles
-
     };
 
 }

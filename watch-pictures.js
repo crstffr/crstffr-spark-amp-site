@@ -2,25 +2,26 @@ var LocalStuff = require('./modules/LocalStuff');
 var CloudStuff = require('./modules/CloudStuff');
 var DataStuff = require('./modules/DataStuff');
 var Logger = require('./modules/Logger');
-var Firebase = require('firebase');
-var easyimg = require('easyimage');
 var config = require('./config');
-var RSVP = require('rsvp');
+var Gaze = require('gaze').Gaze;
 var gaze = require('gaze');
+var RSVP = require('rsvp');
+
+var logger = new Logger(config.sitename + '-pictures');
 
 process.on('uncaughtException', function(e) {
-    console.error('ERROR: ', e);
-    process.exit(1);
+    logger.error('UncaughtException: ' + e);
+    setTimeout(function(){
+        process.exit(1);
+    }, 1000);
 });
 
 (function(){
 
-    var _fb;
     var _data;
     var _pics;
     var _cloud;
     var _local;
-    var _logger;
 
     _init();
 
@@ -30,29 +31,65 @@ process.on('uncaughtException', function(e) {
      */
     function _init() {
 
-        _logger = new Logger(config.sitename + '-pictures');
+        logger.info('-------------------------------');
+        logger.info('Starting image watch process...');
+        logger.info('Starting Local <> Remote sync...');
 
-        _logger.info('This is info');
-        _logger.warn('This is warn');
-        _logger.error('This is error');
+        _data = new DataStuff(config.sitename, config.data, logger);
+        _cloud = new CloudStuff(config.sitename, config.cloud, logger);
+        _local = new LocalStuff(config.sitename, config.local, logger);
 
-        _fb = new Firebase(config.data.firebase.root + config.sitename);
-
-        _data = new DataStuff(config.sitename, config.data, _logger);
-        _cloud = new CloudStuff(config.sitename, config.cloud, _logger);
-        _local = new LocalStuff(config.sitename, config.local, _logger);
-
-        RSVP.hash({
-            data: _getData(),
+        var _fetchAll = RSVP.hash({
             local: _local.fetch(),
             cloud: _cloud.fetch()
-        }).then(_syncLocations);
+        });
+
+        _fetchAll.then(_syncLocal).catch(function(error){
+            logger.warn('Fetch was rejected: %s', error.message || error);
+        });
+
+        logger.info('Starting the Gaze watcher...');
 
 
-        _cloud.fetch().then(function(files){
-            console.log('Cloud files', files.length);
-        }).catch(function(error){
-            console.log('Cant fetch files:', error.message);
+//       gaze([config.local.source + '*.*', config.local.source + '**/*.*'], function(err, watcher){
+//
+//           watcher.on('added', function(filepath) {
+//               logger.info('ADDED: %s', filepath);
+//           });
+//
+//           watcher.on('changed', function(filepath) {
+//               logger.info('CHANGED: %s', filepath);
+//           });
+//
+//           watcher.on('deleted', function(filepath) {
+//               logger.info('DELETED: %s', filepath);
+//           });
+//
+//
+//       });
+
+        var gaze = new Gaze(['*.*', '**/*', '**', '**/*.*'], {
+            cwd: config.local.source,
+            mode: 'poll'
+        });
+
+        // Files have all started watching
+        gaze.on('ready', function(watcher) {
+
+            logger.info('Gaze is ready');
+
+            watcher.on('all', function(event, filepath){
+
+                logger.info(event, filepath);
+
+            });
+
+            watcher.on('error', function(err){
+
+                logger.error('Gaze error: %s', err);
+
+            });
+
         });
 
     }
@@ -62,88 +99,73 @@ process.on('uncaughtException', function(e) {
      * @param results
      * @private
      */
-    function _syncLocations(results) {
+    function _syncLocal(results) {
 
         // If pictures exist in SRC but not in FB
             // copy & resize the images
             // collect all information on images
             // add image data to FB
 
-        var srcToFB = new RSVP.Promise(function(resolve, reject) {
+        var busy = false;
 
-            // Loop over each of the local source pictures, checking for
-            // values in Firebase.  If there is no data, then collect
-            // it and set it into the database.
+        logger.info('Fetched Local images: %d', results.local.length);
+        logger.info('Fetched Cloud images: %d', results.cloud.length);
 
-            results.local.forEach(function(picData) {
+        // Loop over each of the local source pictures, checking for
+        // values in Firebase.  If there is no data, then collect
+        // it and set it into the database.
 
-                try {
+        results.local.forEach(function(picData, i) {
 
-                    var imgRef = _fb.child(picData.id);
+            try {
 
-                    imgRef.once('value', function(snapshot) {
+                var imgRef = _data.node(picData.id);
 
-                        var data = snapshot.val();
+                _data.fetch(picData.id).then(function(results) {
 
-                        if (!data) {
+                    var node = results.node;
+                    var data = results.data;
 
-                            // Get information about the image and when we
-                            // have it, set the data into firebase.
+                    if (!data) {
 
-                            easyimg.info(picData.file).then(function(info) {
-                                imgRef.set({local: info});
-                                imgRef.update({local: picData});
-                            });
+                        busy = true;
 
-                            // Now upload the image to the Cloud
+                        // Get information about the image and when we
+                        // have it, set the data into firebase.
 
-                            _cloud.upload(picData).then(function(response){
+                        logger.info('%s - NEW', picData.id);
 
-                                console.log('Success uploading', picData.id);
-                                imgRef.update({cloud: response});
+                        node.setLocalData(picData);
 
-                            }).catch(function(error){
+                        _cloud.upload(picData).then(function(response) {
 
-                                console.log('Error uploading', picData.id, error);
-                                imgRef.remove();
+                            logger.info('%s - UPLOADED', picData.id);
+                            node.update({cloud: response});
 
-                            })
+                        }).catch(function(error){
 
+                            logger.error('%s - ERROR (%s)', picData.id, error);
+                            node.remove();
 
-                        }
-                    });
+                        });
 
-                } catch(e) {
-                    console.log('ERROR: ', e);
-                }
-            });
+                    }
+
+                });
+
+            } catch(e) {
+                logger.error('Error processing local images: %s', e);
+            }
         });
+
+        if (busy === false) {
+            logger.info('All local images in sync');
+        }
 
         // If pictures exist in FB but not in SRC
             // remove images from DST (if there)
             // remove image from FB
 
-
-
-
-        //console.log('Firebase', results.data);
-        //console.log('SRC Pictures', results.srcPics);
-        //console.log('DST Pictures', results.dstPics);
-
-    }
-
-
-    /**
-     *
-     * @return {RSVP.Promise}
-     * @private
-     */
-    function _getData() {
-        return new RSVP.Promise(function(resolve, reject){
-            _fb.on('value', function(snapshot){
-                resolve(snapshot.val());
-            });
-        });
     }
 
 })();
