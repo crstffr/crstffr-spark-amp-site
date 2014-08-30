@@ -2,6 +2,14 @@ module.exports = {
 
     sitename: 'smartamp',
 
+
+    cloud: {
+        cloud_name: 'brace-images',
+        api_key: '787328258491676',
+        api_secret: 'EicvBgJZNa7xZCgB9q0flOoS-yQ',
+        cdn_subdomain: true
+    },
+
     data: {
         firebase: {
             root: 'https://brace-images.firebaseio.com/'
@@ -10,15 +18,19 @@ module.exports = {
 
     local: {
         source: 'source/content/pictures/',
-        formats: [ '.jpg', '.jpeg', '.png', '.gif' ],
         watch: ['*', '**/*']
     },
 
-    cloud: {
-        cloud_name: 'brace-images',
-        api_key: '787328258491676',
-        api_secret: 'EicvBgJZNa7xZCgB9q0flOoS-yQ',
-        cdn_subdomain: true,
+    logger: {
+        papertrail: {
+            host: 'logs2.papertrailapp.com',
+            port: 28144
+        }
+    },
+
+    image: {
+        exif: false,
+        formats: [ '.jpg', '.jpeg', '.png', '.gif' ],
         sizes: {
             full: {
                 crop: 'fit',

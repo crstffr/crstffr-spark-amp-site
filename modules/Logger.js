@@ -1,15 +1,16 @@
 var extend = require('extend');
 var Winston = require('winston');
 var Papertrail = require('winston-papertrail').Papertrail;
+var instance;
 
-module.exports = function Logger(programName) {
+function Logger(config, program) {
 
-    programName = programName || 'default';
+    program = program || 'default';
 
     var paperTransport = new Papertrail({
-        host: 'logs2.papertrailapp.com',
-        port: 28144,
-        program: programName,
+        host: config.logger.papertrail.host,
+        port: config.logger.papertrail.port,
+        program: program,
         colorize: true
     });
 
@@ -34,4 +35,14 @@ module.exports = function Logger(programName) {
         ]
     });
 
+}
+
+module.exports = {
+    create: function(a, b) {
+        instance = new Logger(a, b);
+        return instance;
+    },
+    getInstance: function() {
+        return instance;
+    }
 }

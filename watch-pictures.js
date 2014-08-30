@@ -1,27 +1,37 @@
-var LocalStuff = require('./modules/LocalStuff');
-var CloudStuff = require('./modules/CloudStuff');
-var DataStuff = require('./modules/DataStuff');
-var Logger = require('./modules/Logger');
-var config = require('./config');
-var Gaze = require('gaze').Gaze;
-var gaze = require('gaze');
 var RSVP = require('rsvp');
+var watch = require('watch');
+var config = require('./config');
+var traverse = require('traverse');
 
-var logger = new Logger(config.sitename + '-pictures');
+var Logger = require('./modules/Logger');
+var logger = Logger.create(config, config.sitename + '-pictures');
+
+var Local = require('./modules/Local');
+var Cloud = require('./modules/Cloud');
+var Image = require('./modules/Image');
+var Data = require('./modules/Data');
+
+process.on('SIGINT', function() {
+    logger.warn('SIGINT - process interrupted');
+    setTimeout(process.exit, 1000);
+});
+
+process.on('SIGTERM', function() {
+    logger.error('SIGTERM - process terminated');
+    setTimeout(process.exit, 1000);
+});
 
 process.on('uncaughtException', function(e) {
     logger.error('UncaughtException: ' + e);
-    setTimeout(function(){
-        process.exit(1);
-    }, 1000);
+    setTimeout(process.exit, 1000);
 });
 
 (function(){
 
-    var _data;
-    var _pics;
-    var _cloud;
-    var _local;
+    var _local = Local.create(config);
+    var _cloud = Cloud.create(config);
+    var _data = Data.create(config);
+    var _images = {};
 
     _init();
 
@@ -35,64 +45,60 @@ process.on('uncaughtException', function(e) {
         logger.info('Starting image watch process...');
         logger.info('Starting Local <> Remote sync...');
 
-        _data = new DataStuff(config.sitename, config.data, logger);
-        _cloud = new CloudStuff(config.sitename, config.cloud, logger);
-        _local = new LocalStuff(config.sitename, config.local, logger);
+        _setupWatch();
 
-        var _fetchAll = RSVP.hash({
+        RSVP.hash({
             local: _local.fetch(),
-            cloud: _cloud.fetch()
+            data: _data.fetch()
+        }).then(_syncLocal).catch(function(e) {
+            logger.warn('Fetch was rejected: %s', e.message || e);
         });
 
-        _fetchAll.then(_syncLocal).catch(function(error){
-            logger.warn('Fetch was rejected: %s', error.message || error);
-        });
-
-        logger.info('Starting the Gaze watcher...');
+    }
 
 
-//       gaze([config.local.source + '*.*', config.local.source + '**/*.*'], function(err, watcher){
-//
-//           watcher.on('added', function(filepath) {
-//               logger.info('ADDED: %s', filepath);
-//           });
-//
-//           watcher.on('changed', function(filepath) {
-//               logger.info('CHANGED: %s', filepath);
-//           });
-//
-//           watcher.on('deleted', function(filepath) {
-//               logger.info('DELETED: %s', filepath);
-//           });
-//
-//
-//       });
+    /**
+     * Start the file system watcher that triggers add/remove events
+     * @private
+     */
+    function _setupWatch() {
 
-        var gaze = new Gaze(['*.*', '**/*', '**', '**/*.*'], {
-            cwd: config.local.source,
-            mode: 'poll'
-        });
+        watch.createMonitor(config.local.source, function(monitor) {
 
-        // Files have all started watching
-        gaze.on('ready', function(watcher) {
-
-            logger.info('Gaze is ready');
-
-            watcher.on('all', function(event, filepath){
-
-                logger.info(event, filepath);
-
+            monitor.on("created", function(f, stat) {
+                var image = new Image(f);
+                logger.info('%s - ADDED TO SOURCE', image.data.id);
+                image.saveData();
+                image.upload();
+                _images[f] = image;
             });
 
-            watcher.on('error', function(err){
+            monitor.on("changed", function(f, curr, prev) {
+                var image = new Image(f);
+                logger.info('%s - CHANGED IN SOURCE', image.data.id);
+                image.saveData();
+                image.upload();
+                _images[f] = image;
+            });
 
-                logger.error('Gaze error: %s', err);
+            monitor.on("removed", function(f, stat) {
+
+                var image = _images[f];
+
+                if (image) {
+                    logger.info('%s - REMOVED FROM SOURCE', image.data.id);
+                    image.remove();
+                } else {
+                    logger.info('%s - REMOVED FROM SOURCE', f);
+                    logger.warn('%s - UNABLE TO REMOVE, NO IMG DATA', f);
+                }
 
             });
 
         });
 
     }
+
 
     /**
      *
@@ -106,67 +112,55 @@ process.on('uncaughtException', function(e) {
             // collect all information on images
             // add image data to FB
 
-        var busy = false;
-
-        logger.info('Fetched Local images: %d', results.local.length);
-        logger.info('Fetched Cloud images: %d', results.cloud.length);
+        logger.info('Local Images: %d', results.local.length);
 
         // Loop over each of the local source pictures, checking for
         // values in Firebase.  If there is no data, then collect
         // it and set it into the database.
 
-        results.local.forEach(function(picData, i) {
+        results.local.forEach(function(image, i) {
+
+            _images[image.file] = image;
 
             try {
 
-                var imgRef = _data.node(picData.id);
-
-                _data.fetch(picData.id).then(function(results) {
-
-                    var node = results.node;
-                    var data = results.data;
+                image.getRemoteData().then(function(data){
 
                     if (!data) {
-
-                        busy = true;
-
-                        // Get information about the image and when we
-                        // have it, set the data into firebase.
-
-                        logger.info('%s - NEW', picData.id);
-
-                        node.setLocalData(picData);
-
-                        _cloud.upload(picData).then(function(response) {
-
-                            logger.info('%s - UPLOADED', picData.id);
-                            node.update({cloud: response});
-
-                        }).catch(function(error){
-
-                            logger.error('%s - ERROR (%s)', picData.id, error);
-                            node.remove();
-
-                        });
-
+                        logger.info('%s - NEW', image.data.id);
+                        image.saveData();
+                        image.upload();
                     }
-
                 });
 
             } catch(e) {
-                logger.error('Error processing local images: %s', e);
+
+                logger.error('Error syncing local images: %s', e.message || e);
             }
         });
 
-        if (busy === false) {
-            logger.info('All local images in sync');
-        }
 
         // If pictures exist in FB but not in SRC
             // remove images from DST (if there)
             // remove image from FB
 
+        traverse(results.data).forEach(function(x){
+            if (x.cloud && x.local) {
+                if (_images[x.local.file]) { return; }
+                if (x.local.file) {
+                    var image = new Image(x.local.file);
+                    logger.info('%s - IS MISSING', image.data.id);
+                    image.remove();
+                }
+            }
+        });
+
+        return results;
+        
     }
+
+
+
 
 })();
 
