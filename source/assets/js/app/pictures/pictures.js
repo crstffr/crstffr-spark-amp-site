@@ -42,9 +42,11 @@ window.App = window.App || {};
 
             _hash.onChange(function(path, oldPath){
 
+                console.log('hash change', path);
+
                 _menu.select(path);
 
-                console.log('hash change', path);
+                _view.filter(path);
 
                 if (!_loaded[path]) {
                     _data.fetch(path).then(function(data) {
@@ -52,10 +54,9 @@ window.App = window.App || {};
                         _loaded[path] = true;
                     });
                 }
+            });
 
-
-
-            }).init();
+            _hash.init();
 
         }
 
