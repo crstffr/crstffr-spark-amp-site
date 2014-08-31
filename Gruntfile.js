@@ -46,8 +46,9 @@ module.exports = function (grunt) {
     grunt.registerTask('rebuild', [
         'clean:blog'
         ,'shell:build'
-        //,'shell:pictures'
+        ,'copy:css'
         ,'less:public'
+        ,'copy:config'
         ,'copy:js'
         ,'copy:img'
         ,'copy:vendor'
@@ -87,9 +88,17 @@ module.exports = function (grunt) {
                 ],
                 tasks: ['shell:build']
             },
+            css: {
+                files: ['source/assets/css/**/*.css'],
+                tasks: ['copy:css']
+            },
             less: {
                 files: ['source/assets/less/*.less'],
                 tasks: ['less:public']
+            },
+            config: {
+                files: ['config/config.js'],
+                tasks: ['copy:config']
             },
             js: {
                 files: ['source/assets/js/**/*.js'],
@@ -157,6 +166,24 @@ module.exports = function (grunt) {
          */
         ,copy: {
 
+            config: {
+                files: [
+                {
+                    expand: true,
+                    cwd: 'config/',
+                    src: ['config.js'],
+                    dest: 'public/assets/js/'
+                }
+            ]},
+            css: {
+                files: [
+                {
+                    expand: true,
+                    cwd: 'source/assets/css/',
+                    src: ['**/*'],
+                    dest: 'public/assets/css/'
+                }
+            ]},
             js: {
                 files: [
                 {

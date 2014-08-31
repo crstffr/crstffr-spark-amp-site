@@ -2,7 +2,7 @@ var fs = require('fs');
 var path = require('path');
 var extend = require('extend');
 var easyimg = require('easyimage');
-var config = require('../config');
+var config = require('./Config');
 var logger = require('./Logger').getInstance();
 
 module.exports = function(file) {

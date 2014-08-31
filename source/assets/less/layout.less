@@ -197,59 +197,99 @@ body * {
     margin: @size-1 0;
 }
 
-.picture-index-container {
 
-    .filter-row {
-        margin: 5px;
 
-        .filters {
-            float: left;
-            .btn {
-                margin-right: 5px;
+
+
+
+
+
+.picture-app-container {
+
+    @navwidth: 30%;
+    @viewwidth: 100% - @navwidth;
+
+    position: absolute;
+    width: 100%;
+    height: 100%;
+
+    .menu {
+        position: fixed;
+        width: @navwidth;
+        top: 0;
+        left: 0;
+        bottom: 0;
+
+        ul {
+
+            li {
+
+                a {
+                    display: block;
+                    padding: 18px;
+                    text-decoration: none;
+
+                    &.has-children:after {
+                        content: '>';
+                        position: absolute;
+                        width: 20px;
+                        right: 0;
+                    }
+
+                }
+
+                &.waSlideMenu-back a:after {
+                    content: '';
+                }
+
+
+
+
+
+
             }
         }
 
-        .search {
-            float: right;
+    }
+
+    .viewport {
+
+        width: @viewwidth;
+        position: absolute;
+        left: @navwidth;
+        top: 0;
+        right: 0;
+        bottom: 0;
+
+        .msg-loading,
+        .msg-empty {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+
+            span {
+                width: 100%;
+                display: block;
+                text-align: center;
+                line-height: 100%;
+            }
+        }
+
+        .image-container {
+            position: absolute;
+            width: 100%;
+            height: auto;
+
+            .image-wrapper {
+                margin: 25px;
+            }
+
         }
 
     }
-
-    .picture-wrapper {
-
-        margin: 5px;
-        position: relative;
-        float: left;
-
-        img {
-            border-radius: 0px;
-            -webkit-box-shadow: 2px 2px 2px 0px rgba(0,0,0,0.25);
-            -moz-box-shadow: 2px 2px 2px 0px rgba(0,0,0,0.25);
-            box-shadow: 2px 2px 2px 0px rgba(0,0,0,0.25);
-        }
-
-    }
-
-    .picture-info-panel {
-
-        margin: 25px;
-
-        label, input {
-            display: inline-block;
-        }
-
-        label {
-            width: 15%;
-            max-width: 100px;
-        }
-
-        input {
-            width: 80%;
-        }
-
-    }
-
 }
+
+
 
 
 

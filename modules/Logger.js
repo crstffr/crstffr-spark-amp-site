@@ -22,7 +22,7 @@ function Logger(config, program) {
         }
     });
 
-    return new Winston.Logger({
+    var logger = new Winston.Logger({
         levels: {
             debug: 0,
             info: 1,
@@ -34,6 +34,12 @@ function Logger(config, program) {
             paperTransport
         ]
     });
+
+    logger.line = function(){
+        logger.info('-------------------------------');
+    }
+
+    return logger;
 
 }
 

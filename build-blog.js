@@ -11,6 +11,13 @@ var ignore = require('metalsmith-ignore');
 var drafts = require('metalsmith-drafts');
 var more = require('./modules/more-or-less');
 
+var config = require('./modules/Config');
+var Logger = require('./modules/Logger');
+var logger = Logger.create(config, config.sitename + '-building');
+
+logger.line();
+logger.info('Site build started');
+
 var options = {
     perPage: 100
 }
@@ -27,7 +34,6 @@ Metalsmith(__dirname)
     .clean(false)
     .source('source/content')
     .destination('./public')
-    .use(ignore('pictures/**/*'))
     .use(collections({
         posts: {
             pattern: 'articles/**/*',
@@ -66,9 +72,8 @@ Metalsmith(__dirname)
     )
     .build(function(err) {
         if (err) throw err;
+        process.exit();
     });
-
-
 
 function buildDate(files, metalsmith, done) {
     var data = metalsmith.metadata();
@@ -103,6 +108,8 @@ function blogIndexList(files, metalsmith, done) {
         posts = metalsmith.data.posts,
         perPage = options.perPage;
 
+    logger.info('Posts found: %d', posts.length);
+
     index.posts = posts.slice(0, perPage);
     index.currentPage = 1;
     index.numPages = Math.ceil(posts.length / perPage);
@@ -136,6 +143,7 @@ function blogIndexList(files, metalsmith, done) {
 function blogTagLists(files, metalsmith, done) {
 
     var tags = {};
+    var count = 0;
 
     for (p in metalsmith.data.posts) {
         for (t in metalsmith.data.posts[p].tags) {
@@ -148,6 +156,7 @@ function blogTagLists(files, metalsmith, done) {
     }
 
     for (tag in tags) {
+        count++;
         files['tag/' + tag + '/index.md'] = {
             template: 'list-tag.html',
             tag: tag,
@@ -157,6 +166,8 @@ function blogTagLists(files, metalsmith, done) {
             posts: tags[tag]
         }
     }
+
+    logger.info('Tags found: %d', count);
 
     done();
 }

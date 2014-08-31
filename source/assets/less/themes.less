@@ -1,4 +1,5 @@
 @import "_mixins";
+@import "type";
 
 /* ==========================================================================
    T H E M E S
@@ -119,5 +120,75 @@
 
     color: @theme-dark-body;
     background: @theme-dark-background;
+
+}
+
+
+
+.picture-app-container {
+
+    font-family: "Open Sans", Arial, sans-serif;
+
+    .theme-light & {
+
+        @view-background: @color-white;
+        @menu-background: darken(@view-background, 4%);
+        @menu-border: 1px solid darken(@menu-background, 10%);
+        @menu-bg-hover: lighten(@menu-background, 2%);
+        @menu-bg-select: lighten(@menu-background, 4%);
+
+        background: @view-background;
+
+        .menu {
+
+            background: @menu-background;
+            border-right: @menu-border;
+
+            font-size: 16px;
+            letter-spacing: 0.03em;
+
+
+            ul {
+                li {
+                    a {
+                        .light;
+                        color: @color-offblack;
+                        border-bottom: @menu-border;
+                        &:hover {
+                            background: @menu-bg-hover;
+                        }
+                    }
+
+                    &.selected > a {
+                        background: @menu-bg-select;
+                    }
+
+                }
+
+            }
+
+        }
+
+        .viewport {
+
+            .msg-loading, .msg-empty {
+                color: darken(@menu-background, 10%);
+                font-size: 65px;
+            }
+
+            .image-container {
+
+                .image-wrapper {
+                    background: darken(@menu-background, 10%);
+                }
+
+            }
+
+        }
+
+
+
+    }
+
 
 }

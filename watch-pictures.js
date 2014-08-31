@@ -1,8 +1,7 @@
 var RSVP = require('rsvp');
 var watch = require('watch');
-var config = require('./config');
 var traverse = require('traverse');
-
+var config = require('./modules/Config');
 var Logger = require('./modules/Logger');
 var logger = Logger.create(config, config.sitename + '-pictures');
 
