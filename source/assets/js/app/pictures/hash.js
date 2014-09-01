@@ -18,6 +18,10 @@ window.App = window.App || {};
             return this;
         }
 
+        this.current = function() {
+            return hasher.getHash();
+        }
+
         this.setHash = function(hash) {
             hasher.setHash(hash);
         }

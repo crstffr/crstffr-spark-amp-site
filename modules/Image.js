@@ -7,17 +7,17 @@ var logger = require('./Logger').getInstance();
 
 module.exports = function(file) {
 
-    if (!_isValid()) { return false; }
-
-    var img = this;
-
-    this.file = file;
-    this.valid = _isValid();
-    this.data = _getLocalData();
-
     var _data = require('./Data').getInstance();
     var _cloud = require('./Cloud').getInstance();
-    var _node = _data.node(img.data.id);
+
+    var img = this;
+    this.file = file;
+    this.data = _getLocalData();
+    this.exists = _exists(file);
+    this.isdir = _isDir(file);
+    this.valid = _isValid(file);
+    this.node = _data.node(img.data.id);
+    if (!this.valid) { return this; }
 
     /**
      * Upload the image file to the cloud storage service,
@@ -26,16 +26,16 @@ module.exports = function(file) {
      */
     this.upload = function() {
 
-        logger.info('%s - UPLOADING...', img.data.id);
+        logger.info('%s - UPLOADING IMAGE...', img.data.id);
 
         _cloud.upload(img).then(function(response) {
 
             logger.info('%s - UPLOAD COMPLETE', img.data.id);
-            _node.update({cloud: response});
+            img.node.update({cloud: response});
 
         }).catch(function(e) {
             logger.error('%s - UPLOAD ERROR (%s)', img.data.id, e.message || e);
-            _node.remove();
+            img.node.remove();
         });
     };
 
@@ -43,9 +43,9 @@ module.exports = function(file) {
      * Set the local image data into the database.
      */
     this.saveData = function() {
-        _node.update({local: img.data});
+        img.node.update({local: img.data});
         easyimg.info(img.file).then(function(info) {
-            _node.update({local: extend({}, img.data, info)});
+            img.node.update({local: extend({}, img.data, info)});
         });
     };
 
@@ -54,7 +54,7 @@ module.exports = function(file) {
      * @return {RSVP.Promise}
      */
     this.getRemoteData = function() {
-        return _node.fetch();
+        return img.node.fetch();
     }
 
     /**
@@ -64,11 +64,11 @@ module.exports = function(file) {
      */
     this.remove = function() {
 
-        logger.info('%s - REMOVING...', img.data.id);
+        logger.info('%s - REMOVING IMAGE...', img.data.id);
 
         _cloud.remove(img.data.cid).then(function(results){
 
-            _node.remove();
+            img.node.remove();
             logger.info('%s - REMOVE COMPLETE', img.data.id);
 
         }).catch(function(e){
@@ -88,12 +88,12 @@ module.exports = function(file) {
         try {
 
             ext = path.extname(img.file);
-            url = img.file.replace(config.local.source, '');
-            dir = path.dirname(url) + '/';
+            url = _getShortPath(img.file);
+            dir = (path.dirname(url) + '/').replace('./','');
             base = path.basename(img.file, ext);
             name = path.basename(img.file);
 
-            if (fs.existsSync(img.file)) {
+            if (_exists(img.file)) {
                 time = _getModifiedDate(img.file);
             }
 
@@ -126,9 +126,21 @@ module.exports = function(file) {
      * @return {Boolean}
      * @private
      */
-    function _isValid() {
+    function _isValid(file) {
         var ext = path.extname(file).toLowerCase();
         return (config.image.formats.indexOf(ext) > -1);
+    }
+
+    function _exists(file) {
+        return fs.existsSync(file);
+    }
+
+    function _getShortPath(file) {
+        return file.replace(config.local.source, '');
+    }
+
+    function _isDir(file) {
+        return _exists(file) && fs.lstatSync(file).isDirectory();
     }
 
     /**

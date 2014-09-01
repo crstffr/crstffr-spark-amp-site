@@ -1,5 +1,4 @@
 var RSVP = require('rsvp');
-var watch = require('watch');
 var traverse = require('traverse');
 var config = require('./modules/Config');
 var Logger = require('./modules/Logger');
@@ -8,6 +7,7 @@ var logger = Logger.create(config, config.sitename + '-pictures');
 var Local = require('./modules/Local');
 var Cloud = require('./modules/Cloud');
 var Image = require('./modules/Image');
+var Watch = require('./modules/Watch');
 var Data = require('./modules/Data');
 
 process.on('SIGINT', function() {
@@ -29,6 +29,7 @@ process.on('uncaughtException', function(e) {
 
     var _local = Local.create(config);
     var _cloud = Cloud.create(config);
+    var _watch = Watch.create(config);
     var _data = Data.create(config);
     var _images = {};
 
@@ -40,60 +41,26 @@ process.on('uncaughtException', function(e) {
      */
     function _init() {
 
-        logger.info('-------------------------------');
-        logger.info('Starting image watch process...');
+        logger.line();
         logger.info('Starting Local <> Remote sync...');
 
-        _setupWatch();
+        _watch.start(config.local.source);
+
+        _watch.onCreate(function(f, stat, image){
+            // console.log('ON CREATE OUTSIDE');
+            var image = new Image(f);
+            if (image.valid) {
+                _images[f] = image;
+            } else if (image.isdir) {
+                //image.node.set({empty: true});
+            }
+        });
 
         RSVP.hash({
             local: _local.fetch(),
             data: _data.fetch()
         }).then(_syncLocal).catch(function(e) {
             logger.warn('Fetch was rejected: %s', e.message || e);
-        });
-
-    }
-
-
-    /**
-     * Start the file system watcher that triggers add/remove events
-     * @private
-     */
-    function _setupWatch() {
-
-        watch.createMonitor(config.local.source, function(monitor) {
-
-            monitor.on("created", function(f, stat) {
-                var image = new Image(f);
-                logger.info('%s - ADDED TO SOURCE', image.data.id);
-                image.saveData();
-                image.upload();
-                _images[f] = image;
-            });
-
-            monitor.on("changed", function(f, curr, prev) {
-                var image = new Image(f);
-                logger.info('%s - CHANGED IN SOURCE', image.data.id);
-                image.saveData();
-                image.upload();
-                _images[f] = image;
-            });
-
-            monitor.on("removed", function(f, stat) {
-
-                var image = _images[f];
-
-                if (image) {
-                    logger.info('%s - REMOVED FROM SOURCE', image.data.id);
-                    image.remove();
-                } else {
-                    logger.info('%s - REMOVED FROM SOURCE', f);
-                    logger.warn('%s - UNABLE TO REMOVE, NO IMG DATA', f);
-                }
-
-            });
-
         });
 
     }

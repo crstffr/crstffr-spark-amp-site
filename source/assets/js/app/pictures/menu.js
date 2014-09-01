@@ -14,7 +14,13 @@ window.App = window.App || {};
         var _current;
         var _handlers = [];
         var $menu = $(element);
-        var $items;
+        var $folders = $();
+        var $back;
+
+        this.select = _select;
+        this.destroy = _destroy;
+        this.makeFancy = _makeFancy;
+        this.buildFolder = _buildFolder;
 
         _promise = new RSVP.Promise(function(resolve, reject){
             $menu.on('onInit.waSlideMenu', function(){
@@ -22,30 +28,8 @@ window.App = window.App || {};
             });
         });
 
-        this.build = function(data) {
-            _tree = _parseFolderTree(data);
-            _insertElements($menu, _tree);
-            _storeItems();
-            _makeFancy();
-        }
-
         this.ready = function() {
             return _promise;
-        }
-
-        this.select = function(path) {
-            this.ready().then(function(){
-                var $item = $items.filter('[data-path="' + path + '"]');
-                $items.removeClass('selected');
-                $item.addClass('selected');
-            });
-        }
-
-        this.destroy = function() {
-            $menu.waSlideMenu('exec','destroy');
-            $menu.empty();
-            _tree = {};
-            return this;
         }
 
         this.onClick = function(handler){
@@ -53,10 +37,90 @@ window.App = window.App || {};
             return this;
         }
 
-        function _storeItems() {
-            $items = $menu.find('li.menu-item');
+        /**
+         *
+         * @param id
+         * @return {*}
+         * @private
+         */
+        function _getParentElement(id) {
+            return (id) ? _getFolder(id) : $menu;
         }
 
+        /**
+         *
+         * @return {*}
+         * @private
+         */
+        function _getFolders() {
+            return $menu.find('li[data-id]');
+        }
+
+        /**
+         *
+         * @param id
+         * @return {*}
+         * @private
+         */
+        function _getFolder(id) {
+            return $menu.find('li[data-id="' + id + '"]');
+        }
+
+        /**
+         *
+         * @param folder
+         * @private
+         */
+        function _buildFolder(folder) {
+
+            if (folder.count.folders === 0) { return; }
+
+            var $ul = $('<ul/>');
+            var $parent = _getParentElement(folder.id);
+            $parent.append($ul);
+
+            for (var name in folder.folders) {
+                if (folder.folders.hasOwnProperty(name)) {
+                    var data = folder.folders[name];
+                    var $li = _buildElement($parent, name, data);
+                    $ul.append($li);
+                    _buildFolder(data);
+                }
+            }
+
+            $folders = _getFolders();
+        }
+
+        /**
+         *
+         * @param path
+         * @private
+         */
+        function _select(path) {
+            if (!path) { return; }
+            _self.ready().then(function(){
+                var $folder = _getFolder(path);
+                $folders.removeClass('selected');
+                $folder.addClass('selected');
+            });
+        }
+
+        /**
+         *
+         * @return {*}
+         * @private
+         */
+        function _destroy() {
+            $menu.waSlideMenu('exec','destroy');
+            $menu.empty();
+            _tree = {};
+            return this;
+        }
+
+        /**
+         *
+         * @private
+         */
         function _makeFancy() {
             $menu.waSlideMenu({
                 slideSpeed: 200,
@@ -64,59 +128,47 @@ window.App = window.App || {};
                 autoHeightMenu: false,
                 backLinkContent: '..'
             });
+            $back = $menu.find('.waSlideMenu-back a');
+            $back.on('click', _onMenuClick);
         }
 
+        /**
+         *
+         * @param $parent
+         * @param name
+         * @param data
+         * @return {*}
+         * @private
+         */
+        function _buildElement($parent, name, data) {
+            
+            var id = data.id;
+            var $li, $a;
 
-        function _parseFolderTree(data) {
-            var test = [];
-            var tree = traverse(data).map(function(x){
-                if (x.local && x.local.file) {
-                    this.remove();
-                }
-            });
-            return tree;
-        }
+            $a = $('<a/>');
+            $li = $('<li/>');
 
+            $a.text(name);
+            $a.appendTo($li);
+            $li.attr('data-id', id);
+            $li.addClass('menu-item');
+            $a.attr('href', '#/' + id);
+            $a.on('click', _onMenuClick);
 
-        function _insertElements($parent, data, prefix) {
-
-            prefix = prefix || '';
-
-            var path;
-            var $ul, $li, $a;
-            $ul = $('<ul/>');
-
-            for (var i in data) {
-
-                path = prefix + i + '/';
-
-                $a = $('<a/>');
-                $li = $('<li/>');
-                $li.appendTo($ul);
-                $li.addClass('menu-item');
-                $li.attr('data-path', path);
-
-                $a.text(i);
-                $a.attr('href', '#/' + path);
-                $a.on('click', _onMenuClick);
-                $a.appendTo($li);
-
-                if (Object.getOwnPropertyNames(data[i]).length > 0) {
-                    $a.addClass('has-children');
-                    _insertElements($li, data[i], path);
-                }
+            if (data.count.folders > 0) {
+                $a.addClass('has-children');
             }
-            $ul.appendTo($parent);
+
+            return $li;
         }
 
 
         function _onMenuClick(event) {
             var element = this;
             _handlers.forEach(function(handler, i){
-                if (typeof handler === 'function') {
-                    var path = $(element).attr('href').replace('#/','');
-                    handler.bind(element)(event, path);
-                }
+                if (typeof handler !== 'function') { return; }
+                var path = $(element).attr('href').replace('#/','');
+                handler.bind(element)(event, path);
             });
         }
 
