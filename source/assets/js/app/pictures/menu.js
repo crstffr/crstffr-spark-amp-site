@@ -10,7 +10,7 @@ window.App = window.App || {};
         var _util = window.Utils;
 
         var _tree;
-        var _promise;
+        var _ready;
         var _current;
         var _handlers = [];
         var $menu = $(element);
@@ -22,14 +22,14 @@ window.App = window.App || {};
         this.makeFancy = _makeFancy;
         this.buildFolder = _buildFolder;
 
-        _promise = new RSVP.Promise(function(resolve, reject){
+        _ready = new RSVP.Promise(function(resolve, reject){
             $menu.on('onInit.waSlideMenu', function(){
                 resolve();
             });
         });
 
         this.ready = function() {
-            return _promise;
+            return _ready;
         }
 
         this.onClick = function(handler){

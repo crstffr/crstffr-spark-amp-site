@@ -7,112 +7,180 @@ window.App = window.App || {};
     function Image(data) {
 
         var _self = this;
-        var _loaded = false;
+        var _instances = [];
+        var _data = App.Data.getInstance();
         var _view = App.View.getInstance();
+        var _ready;
 
         this.data = data;
         this.id = data.local.id;
-        this.elem = _buildElement();
-        this.img = this.elem.find('img');
+        this.node = _data.node(this.id);
 
-        this.getElement = function() {
-            return _self.elem;
+        _ready = new RSVP.Promise(function(resolve){
+
+            if (_hasAllData()) {
+                resolve();
+                return;
+            }
+
+            _self.node.on('child_added', function(snapshot){
+                var name = snapshot.name();
+                var data = snapshot.val();
+                _self.data[name] = data;
+                switch (name) {
+                    case 'local':
+                        _setSizes();
+                        break;
+                    case 'cloud':
+                        resolve();
+                        break;
+                }
+            });
+        });
+
+        _self.node.on('child_changed', function(snapshot){
+            var name = snapshot.name();
+            var data = snapshot.val();
+            _self.data[name] = data;
+            if (name === 'local') {
+                _setSizes();
+            }
+        });
+
+        this.ready = function() {
+            return _ready;
         }
 
-        this.prepare = function() {
-            _view.insert(_self.elem);
+        this.getInstance = function(name) {
+            for (var i = 0; i < _instances.length; i++) {
+                if (_instances[i].name === name) {
+                    return _instances[i];
+                }
+            }
         }
 
-        this.load = function(delay){
+        this.destroy = function() {
+            _instances.forEach(function(instance){
+                instance.remove();
+            });
+            _instances = null;
+        }
 
-            delay = parseInt(delay || 0);
+        /**
+         *
+         * @param name
+         * @param opts
+         */
+        this.instance = function(name, opts){
 
-            if (_loaded) {
-                return new RSVP.Promise(function(resolve, reject){
-                    resolve();
+            this.config = $.extend({}, {
+                width: 100,
+                onClick: function(){},
+                onLoad: function(){}
+            }, opts);
+
+            var _inst = this;
+            var _loaded = false;
+            var _size = this.size = _dimensions(this.config.width);
+            var _$elem = this.$elem = $('<img class="image"/>');
+
+            this.name = name;
+            this.id = _self.id;
+            this.data = _self.data;
+            this.remove = _remove;
+            this.resize = _resize;
+            this.load = _load;
+
+            _resize();
+
+            /**
+             * Set the SRC of the image element to the URL, returning a
+             * promise that is resolved when the image is loaded.
+             *
+             * @param delay
+             * @return {RSVP.Promise}
+             */
+            function _load(delay){
+
+                delay = parseInt(delay || 0, 10);
+
+                if (_loaded) {
+                    return new RSVP.Promise(function(resolve){ resolve(); });
+                }
+
+                return new RSVP.Promise(function(resolve){
+
+                    _$elem.on('load', function() {
+                        _inst.config.onLoad();
+                        _loaded = true;
+                        resolve();
+                    });
+
+                    _ready.then(function(){
+
+                        _inst.url = _getThumbUrl();
+                        setTimeout(function(){
+                            _inst.$elem.attr('src', _inst.url);
+                        }, delay);
+
+                    });
                 });
             }
 
-            _self.prepare();
+            /**
+             * Given the config width of this instance, calculate the
+             * width and height based upon the ratio calculated from
+             * the local data retrieved from the file.
+             */
+            function _resize() {
+                var size = _dimensions(_inst.config.width);
+                _$elem.width(size.w);
+                _$elem.height(size.h);
+            }
 
+            function _remove() {
+                console.log('Removing', _inst.id, _inst.name);
+                _$elem.remove();
+            }
+
+            _instances.push(this);
+
+        }
+
+
+
+
+        function _getThumbUrl() {
+            if (_hasAllData()) {
+                return _self.data.cloud.eager[0].url;
+            }
+        }
+
+        function _hasAllData() {
             var d = _self.data;
-            if (!d.cloud || !d.cloud.eager) { return; }
-            var url = d.cloud.eager[0].url;
+            return d.cloud &&
+                   d.cloud.eager &&
+                   d.cloud.eager.length > 0 &&
+                   d.cloud.eager[0].url;
+        }
 
-            setTimeout(function(){
-                _self.img.attr('src', url);
-            }, delay);
-
-            return new RSVP.Promise(function(resolve, reject){
-                _self.img.on('load', function(){
-                    _loaded = true;
-                    resolve();
-                })
+        function _setSizes() {
+            _instances.forEach(function(instance){
+                instance.resize();
             });
         }
-        
-        
+
+
         function _dimensions(width) {
             width = width || _self.data.local.width;
-            var w = _self.data.local.width || 1;
-            var h = _self.data.local.height || 1;
+            var w = parseInt(_self.data.local.width || 1, 10);
+            var h = parseInt(_self.data.local.height || 1, 10);
             var r = h / w;
             return {
-                w: width,
-                h: Math.round(width * r),
+                w: parseInt(width, 10),
+                h: parseInt(Math.round(width * r), 10),
                 r: r
             }
-        }
-
-
-        function _buildElement() {
-
-            var $a = $('<a class="image-wrapper"/>');
-            var $img = $('<img class="image"/>');
-            var size = _dimensions(220);
-
-            $img.width(size.w);
-            $img.height(size.h);
-            $img.appendTo($a);
-
-            $a.height(size.h).width(size.w);
-            $a.attr('href', '#/' + _self.data.local.id);
-            $a.attr('data-date', _self.data.local.time);
-            $a.attr('data-path', _self.data.local.dir);
-            $a.on('click', function(e){
-                return false;
-            })
-
-            return $a;
-
-        }
-
-        function _loadImage(data) {
-
-            var thumb = data.cloud.eager[0];
-            var $wrap = $wrapper.clone();
-            var $img = $('<img/>');
-
-            $img.height(thumb.height);
-            $img.width(thumb.width);
-            $img.appendTo($wrap);
-
-            $wrap.height(thumb.height).width(thumb.width);
-            $wrap.attr('href', '#/' + data.local.id);
-            $wrap.attr('data-date', data.local.time);
-            $wrap.attr('data-path', data.local.dir);
-
-            $container.append($wrap);
-            $container.isotope('appended', $wrap);
-
-            $img.attr('src', thumb.url);
-
-            return new RSVP.Promise(function(resolve, reject){
-                $img.on('load', function(){
-                    resolve();
-                });
-            });
-
         }
 
     }

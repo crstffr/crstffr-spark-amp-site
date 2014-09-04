@@ -4,7 +4,7 @@ window.App = window.App || {};
 
     var instance;
 
-    function Hash(element) {
+    function Hash(config) {
 
         var _self = this;
         var _util = window.Utils;

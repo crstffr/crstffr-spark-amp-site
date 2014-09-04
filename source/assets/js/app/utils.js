@@ -1,3 +1,5 @@
+window.App = window.App || {};
+
 (function() {
 
     function Utils() {
@@ -11,6 +13,16 @@
                 }
             }
             return a;
+        }
+
+        this.objectToArray = function(object) {
+            var arr = [];
+            for(var i in object) {
+                if (object.hasOwnProperty(i)) {
+                    arr.push(object[i]);
+                }
+            }
+            return arr;
         }
 
         this.loadLiveReloadScript = function() {
@@ -35,6 +47,6 @@
 
     }
 
-    window.Utils = new Utils();
+    window.Utils = window.App.Utils = new Utils();
 
 }());
