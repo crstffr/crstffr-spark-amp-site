@@ -10,10 +10,8 @@
             cdn_subdomain: true
         },
 
-        data: {
-            firebase: {
-                root: 'https://brace-images.firebaseio.com/'
-            }
+        firebase: {
+            root: 'https://brace-images.firebaseio.com/'
         },
 
         local: {

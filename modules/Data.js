@@ -1,7 +1,8 @@
 var RSVP = require('rsvp');
 var Firebase = require('firebase');
-
+var TokenGenerator = require('firebase-token-generator');
 var logger = require('./Logger').getInstance();
+var uuid = require('node-uuid');
 var instance;
 
 function Data(config) {
@@ -10,7 +11,20 @@ function Data(config) {
         throw 'Data Class needs a sitename on init';
     }
 
-    var _fb = new Firebase(config.data.firebase.root + config.sitename);
+    if (!config.firebase.api_secret) {
+        throw 'Firebase secret not defined in the config';
+    }
+
+    var root = new Firebase(config.firebase.root + config.sitename);
+    var generator = new TokenGenerator(config.firebase.api_secret);
+    var token = generator.createToken({uid: config.firebase.server_uid});
+
+    root.auth(token, function(error) {
+        if (error) {
+            logger.error('Unable to authenticate with Firebase, invalid token');
+            throw 'No database connection';
+        }
+    });
 
     /**
      *
@@ -32,7 +46,7 @@ function Data(config) {
      * @private
      */
     function _node(child) {
-        var node = (child) ? _fb.child(child) : _fb;
+        var node = (child) ? root.child(child) : root;
         node.fetch = function(){
             return _fetch(child);
         };
