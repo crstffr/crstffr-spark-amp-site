@@ -33,8 +33,8 @@ window.App = window.App || {};
             $loading.show();
         }
 
-        this.isWorking = function() {
-            App.Load.bar.inc();
+        this.isWorking = function(howMuch) {
+            App.Load.bar.inc(howMuch || 0.05);
         }
 
         this.isDone = function() {
@@ -54,7 +54,6 @@ window.App = window.App || {};
                     setTimeout(resolve, 100);
                 });
             });
-
         }
 
         this.append = function(imageInstance) {
@@ -99,13 +98,11 @@ window.App = window.App || {};
             $a.attr('data-path', data.dir);
 
             $a.on('click', function(evt){
-                return false;
+                 // return false;
             });
 
             return $a;
-
         }
-
     }
 
     window.App.View = {

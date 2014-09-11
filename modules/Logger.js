@@ -37,7 +37,11 @@ function Logger(config, program) {
 
     logger.line = function(){
         logger.info('-------------------------------');
-    }
+    };
+
+    var log = console.log;
+    logger.extend(console);
+    console.log = log;
 
     return logger;
 

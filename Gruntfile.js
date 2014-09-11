@@ -85,8 +85,8 @@ module.exports = function (grunt) {
                     'build-blog.js',
                     'source/**/*.html',
                     'source/content/articles/**/*.md'
-                ],
-                tasks: ['shell:build']
+                ]
+                // tasks: ['shell:build']
             },
             css: {
                 files: ['source/assets/css/**/*.css'],

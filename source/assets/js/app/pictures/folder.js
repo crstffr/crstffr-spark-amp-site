@@ -78,16 +78,18 @@ window.App = window.App || {};
          * @param path
          * @return {*}
          */
-        this.getFolder = function(path) {
+        this.getChild = function(path) {
             if (!path) { return this; }
-            var folder = this;
+            var child = this;
             var paths = path.split('/');
             paths.forEach(function(name){
-                if (name && folder.folders && folder.folders[name]) {
-                    folder = folder.folders[name];
+                if (name && child.folders && child.folders[name]) {
+                    child = child.folders[name];
+                } else if (name && child.images && child.images[name]) {
+                    child = child.images[name];
                 }
             });
-            return folder;
+            return child;
         }
 
         /**

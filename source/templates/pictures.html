@@ -113,6 +113,7 @@
         <script src="/assets/js/app/pictures/view.js"></script>
         <script src="/assets/js/app/pictures/image.js"></script>
         <script src="/assets/js/app/pictures/folder.js"></script>
+        <script src="/assets/js/app/pictures/overlay.js"></script>
         <script src="/assets/js/app/pictures/pictures.js"></script>
         <!-- endbuild -->
 
@@ -126,23 +127,27 @@
         <div class="picture-app-container">
 
             <nav class="menu"></nav>
-            <div class="viewport">
 
+            <div class="viewport">
                 <div class="msg-loading">
                     <span class="midway-vertical">Loading</span>
                 </div>
+
                 <div class="msg-empty hide">
                     <span class="midway-vertical">No Images Here</span>
                 </div>
 
                 <div class="image-container"></div>
-
             </div>
 
         </div>
 
+        <div class="overlay hide">
+            <div class="image-wrapper"></div>
+            <div class="close"></div>
+        </div>
+
         <script>
-            App.Load.bar.start();
             App.Pictures.init();
         </script>
     </body>

@@ -98,7 +98,7 @@ module.exports = function(file) {
             }
 
             id = dir + base;
-            id = id.replace('.', '-');
+            id = id.replace(/[^a-zA-Z0-9\/]/g,'-');
             id = id.replace('&', 'and');
             cid = config.sitename + '/' + id;
 

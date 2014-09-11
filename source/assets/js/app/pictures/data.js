@@ -7,7 +7,7 @@ window.App = window.App || {};
     function Data(config) {
 
         var _self = this;
-        var _root = new Firebase(config.data.firebase.root + config.sitename);
+        var _root = new Firebase(config.firebase.root + config.sitename);
 
         var _createHandlers = [];
         var _removeHandlers = [];

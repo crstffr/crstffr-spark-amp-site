@@ -47,9 +47,11 @@ window.App = window.App || {};
             }
         });
 
+
         this.ready = function() {
             return _ready;
         }
+
 
         this.getInstance = function(name) {
             for (var i = 0; i < _instances.length; i++) {
@@ -59,12 +61,14 @@ window.App = window.App || {};
             }
         }
 
+
         this.destroy = function() {
             _instances.forEach(function(instance){
                 instance.remove();
             });
             _instances = null;
         }
+
 
         /**
          *
@@ -75,21 +79,26 @@ window.App = window.App || {};
 
             this.config = $.extend({}, {
                 width: 100,
+                cropt: 'fit',
                 onClick: function(){},
                 onLoad: function(){}
             }, opts);
 
             var _inst = this;
-            var _loaded = false;
-            var _size = this.size = _dimensions(this.config.width);
-            var _$elem = this.$elem = $('<img class="image"/>');
 
             this.name = name;
+            this.loaded = false;
+
             this.id = _self.id;
             this.data = _self.data;
+            this.url = _buildUrl(this.config);
+            this.size = _dimensions(this.config.width);
+
+            this.$elem = $('<img class="image"/>');
+
+            this.load = _load;
             this.remove = _remove;
             this.resize = _resize;
-            this.load = _load;
 
             _resize();
 
@@ -104,21 +113,20 @@ window.App = window.App || {};
 
                 delay = parseInt(delay || 0, 10);
 
-                if (_loaded) {
+                if (_inst.loaded) {
                     return new RSVP.Promise(function(resolve){ resolve(); });
                 }
 
                 return new RSVP.Promise(function(resolve){
 
-                    _$elem.on('load', function() {
+                    _inst.$elem.on('load', function() {
                         _inst.config.onLoad();
-                        _loaded = true;
+                        _inst.loaded = true;
                         resolve();
                     });
 
                     _ready.then(function(){
 
-                        _inst.url = _getThumbUrl();
                         setTimeout(function(){
                             _inst.$elem.attr('src', _inst.url);
                         }, delay);
@@ -134,13 +142,13 @@ window.App = window.App || {};
              */
             function _resize() {
                 var size = _dimensions(_inst.config.width);
-                _$elem.width(size.w);
-                _$elem.height(size.h);
+                _inst.$elem.width(size.w);
+                _inst.$elem.height(size.h);
             }
 
             function _remove() {
                 console.log('Removing', _inst.id, _inst.name);
-                _$elem.remove();
+                _inst.$elem.remove();
             }
 
             _instances.push(this);
@@ -148,13 +156,28 @@ window.App = window.App || {};
         }
 
 
+        function _buildUrl(opts) {
 
+            var mods = [];
+            opts = opts || {};
 
-        function _getThumbUrl() {
-            if (_hasAllData()) {
-                return _self.data.cloud.eager[0].url;
-            }
+            opts.crop ? mods.push('c_' + opts.crop) : '';
+            opts.width ? mods.push('w_' + opts.width) : '';
+            opts.height ? mods.push('h_' + opts.height) : '';
+
+            var url = _self.data.cloud.url;
+            var mods = mods.join(',');
+            var str = '/upload/';
+
+            mods = (mods) ? mods + '/' : '';
+
+            var parts = url.split(str);
+            var out = [parts[0], str, mods, parts[1]].join('');
+
+            return out;
+
         }
+
 
         function _hasAllData() {
             var d = _self.data;
@@ -163,6 +186,7 @@ window.App = window.App || {};
                    d.cloud.eager.length > 0 &&
                    d.cloud.eager[0].url;
         }
+
 
         function _setSizes() {
             _instances.forEach(function(instance){
