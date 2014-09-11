@@ -100,8 +100,6 @@ window.App = window.App || {};
             this.remove = _remove;
             this.resize = _resize;
 
-            _resize();
-
             /**
              * Set the SRC of the image element to the URL, returning a
              * promise that is resolved when the image is loaded.

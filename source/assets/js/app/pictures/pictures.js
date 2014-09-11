@@ -14,10 +14,10 @@ window.App = window.App || {};
         var _hash;
         var _menu;
         var _view;
-        var _over;
         var _root;
         var _ready;
         var _loaded;
+        var _overlay;
 
         var _config = $.extend({}, config, {
              app: {
@@ -51,7 +51,7 @@ window.App = window.App || {};
             _hash = App.Hash.create(_config);
             _menu = App.Menu.create(_config.app.elements.menu);
             _view = App.View.create(_config.app.elements.view);
-            _over = App.Overlay.create(_config.app.elements.overlay);
+            _overlay = App.Overlay.create(_config.app.elements.overlay);
 
             // Build the Menu from data in Firebase
 
@@ -79,9 +79,15 @@ window.App = window.App || {};
                     _view.isBusy();
                     _menu.select(path);
 
-                    _view.filter(path).then(function(){
-                        _loadChild(path);
-                    });
+                    var child = _root.getChild(path);
+
+                    if (child instanceof App.Folder) {
+                        _view.filter(path).then(function(){
+                            _loadFolder(child);
+                        });
+                    } else if (child instanceof App.Image) {
+                        _loadImage(child);
+                    }
 
                 });
 
@@ -105,6 +111,9 @@ window.App = window.App || {};
             } else if (child instanceof App.Image) {
                 _loadImage(child);
             }
+
+
+
         }
 
 
@@ -114,7 +123,7 @@ window.App = window.App || {};
 
             _view.isBusy();
 
-            _over.open(image).then(function(){
+            _overlay.open(image).then(function(){
                 _view.isDone();
             });
 
@@ -130,7 +139,7 @@ window.App = window.App || {};
          */
         function _loadFolder(folder) {
 
-            _over.close();
+            _overlay.close();
 
             console.log('Load Folder', folder);
 
@@ -233,6 +242,7 @@ window.App = window.App || {};
             var opts = config.image.sizes.thumb;
             var thumb = new image.instance('thumb', opts);
 
+            thumb.resize();
             _view.append(thumb);
 
             return thumb.load(delay);
