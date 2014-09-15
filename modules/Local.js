@@ -21,34 +21,33 @@ function Local(config) {
 
         where = where || config.local.source;
 
-            return (new RSVP.Promise(function(resolve, reject){
+        return (new RSVP.Promise(function(resolve, reject){
 
-                try {
-                    recursive(where, function(err, files){
-                        (err) ? reject(err) : resolve(files);
-                    });
-                } catch(e) {
-                    logger.error('ERROR: %s', e.message || e);
-                }
-
-            })).then(function(files){
-
-                files = files || [];
-                var out = [];
-
-                files.forEach(function(file, i){
-                    try {
-                        var image = new Image(file);
-                        if (image.valid) {
-                            out.push(image);
-                        }
-                    } catch (e) {
-                        logger.error(e.message || e);
-                    }
+            try {
+                recursive(where, function(err, files){
+                    (err) ? reject(err) : resolve(files);
                 });
-                return out;
-            });
+            } catch(e) {
+                logger.error('ERROR: %s', e.message || e);
+            }
 
+        })).then(function(files){
+
+            files = files || [];
+            var out = [];
+
+            files.forEach(function(file, i){
+                try {
+                    var image = new Image(file);
+                    if (image.valid) {
+                        out.push(image);
+                    }
+                } catch (e) {
+                    logger.error(e.message || e);
+                }
+            });
+            return out;
+        });
 
     }
 

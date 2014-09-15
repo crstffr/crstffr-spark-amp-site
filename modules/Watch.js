@@ -26,7 +26,6 @@ function Watch(config) {
         _removeHandlers.push(handler);
     }
 
-
     this.start = function(watchFolder) {
 
         logger.info('Starting image watch process...');
@@ -53,74 +52,28 @@ function Watch(config) {
                     handler(f, stat, image);
                 })
             });
-
         });
-
     }
 
-
-    this.onCreate(function(f, stat, image) {
-
-        // console.log('ON CREATE INSIDE');
-
+    this.onCreate(function(f, stat, image){
         if (!image || !image.valid && !image.isdir) {
-
             logger.warn('%s - SOURCE: ADDED - UNABLE TO PROCESS', f);
-
         } else if (image.exists && image.isdir && image.data) {
-
             logger.info('%s - SOURCE: ADDED FOLDER', image.data.id);
-
         } else if (image.valid) {
-
             logger.info('%s - SOURCE: ADDED', image.data.id);
-            image.saveData();
-            image.upload();
         }
-
     });
-
-
-    this.onChange(function(f, curr, prev, image){
-
-        if (!image && !image.valid && !image.isdir) {
-
-            logger.warn('%s - SOURCE: CHANGED - UNABLE TO PROCESS', f);
-
-        } else if (image.isdir && image.data.id) {
-
-            logger.info('%s - SOURCE: CHANGED FOLDER', image.data.id);
-
-        } else if (image.valid) {
-
-            logger.info('%s - SOURCE: CHANGED', image.data.id);
-            image.saveData();
-            image.upload();
-        }
-    })
-
 
     this.onRemove(function(f, stat, image){
-
         if (!image.exists && image.data && image.data.ext === '') {
-
             logger.info('%s - SOURCE: REMOVED FOLDER', image.data.id);
-
         } else if (image.valid) {
-
             logger.info('%s - SOURCE: REMOVED IMAGE', image.data.id);
-            image.remove();
-
         } else {
-
             logger.warn('%s - SOURCE: REMOVED - UNABLE TO PROCESS', f);
-
         }
-
     });
-
-
-
 
 }
 

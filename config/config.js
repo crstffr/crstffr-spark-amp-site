@@ -7,7 +7,8 @@
         cloud: {
             cloud_name: 'brace-images',
             api_key: '787328258491676',
-            cdn_subdomain: true
+            cdn_subdomain: true,
+            concurrent_uploads: 2
         },
 
         firebase: {
@@ -35,15 +36,26 @@
         image: {
             exif: false,
             formats: [ '.jpg', '.jpeg', '.png', '.gif' ],
+            eager: ['thumb', 'med'],
             sizes: {
-                full: {
-                    crop: 'fit',
-                    width: '1500',
-                    height: '1500'
-                },
                 thumb: {
                     crop: 'fit',
-                    width: '220'
+                    width: '220',
+                    quality: '85',
+                    format: 'jpg'
+                },
+                med: {
+                    crop: 'fit',
+                    width: '800',
+                    height: '800',
+                    quality: '85',
+                    format: 'jpg'
+                },
+                full: {
+                    crop: 'fit',
+                    width: '1200',
+                    height: '1200',
+                    format: 'jpg'
                 }
             }
         }

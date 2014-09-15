@@ -46,6 +46,6 @@ And here it is all closed up and plugged in!  I've got the powered speakers hook
 
 Up Next: Test this thing out!  
 
-I plan on watching it really carefully for the first couple weeks.  Unplugging it every time I leave the room - because I do not wish to set my house on fire. 
+I plan on watching it really carefully for the first couple weeks.  Unplugging it every time I leave the room - because I don't wish to set my house on fire. 
 
 Now that the hardware is wrapped up I'd like to live with it and see how well it functions in my normal day-to-day life.  If it lives up to my expectations then I hope to make more.

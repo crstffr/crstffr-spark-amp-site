@@ -53,15 +53,29 @@ function Cloud(config) {
                 return false;
             }
 
+            // Eagerly create variants of this image immediately upon
+            // upload.  This makes it speedy to load image requests
+            // because the resize has already been completed.
+
+            var eager = [];
+
+            if (config.image.eager.length > 0) {
+                config.image.eager.forEach(function(size){
+                    if (config.image.sizes[size]) {
+                        eager.push(config.image.sizes[size]);
+                    }
+                });
+            }
+
             var options = {
+                eager: eager,
+                overwrite: true,
+                invalidate: true,
                 public_id: image.data.cid,
                 crop: config.image.sizes.full.crop,
                 width: config.image.sizes.full.width,
                 height: config.image.sizes.full.height,
-                eager: [ config.image.sizes.thumb ],
-                exif: config.image.exif,
-                invalidate: true,
-                overwrite: true
+                exif: config.image.exif
             };
 
             Cloudinary.uploader.upload(image.file, function(results){

@@ -18,7 +18,7 @@ window.App = window.App || {};
 
         _ready = new RSVP.Promise(function(resolve){
 
-            if (_hasAllData()) {
+            if (_self.data.cloud) {
                 resolve();
                 return;
             }
@@ -47,11 +47,9 @@ window.App = window.App || {};
             }
         });
 
-
         this.ready = function() {
             return _ready;
         }
-
 
         this.getInstance = function(name) {
             for (var i = 0; i < _instances.length; i++) {
@@ -61,12 +59,29 @@ window.App = window.App || {};
             }
         }
 
-
         this.destroy = function() {
             _instances.forEach(function(instance){
                 instance.remove();
             });
             _instances = null;
+        }
+
+        function _setSizes() {
+            _instances.forEach(function(instance){
+                instance.resize();
+            });
+        }
+
+        function _dimensions(width) {
+            width = width || _self.data.local.width;
+            var w = parseInt(_self.data.local.width || 1, 10);
+            var h = parseInt(_self.data.local.height || 1, 10);
+            var r = h / w;
+            return {
+                r: r,
+                w: parseInt(width, 10),
+                h: parseInt(Math.round(width * r), 10)
+            }
         }
 
 
@@ -77,28 +92,25 @@ window.App = window.App || {};
          */
         this.instance = function(name, opts){
 
-            this.config = $.extend({}, {
-                width: 100,
-                cropt: 'fit',
+            var _inst = this;
+
+            _inst.config = $.extend({}, {
                 onClick: function(){},
                 onLoad: function(){}
-            }, opts);
-
-            var _inst = this;
+            }, config.image.sizes[name], opts);
 
             this.name = name;
             this.loaded = false;
 
             this.id = _self.id;
             this.data = _self.data;
-            this.url = _buildUrl(this.config);
-            this.size = _dimensions(this.config.width);
-
+            this.size = _dimensions(_inst.config.width);
             this.$elem = $('<img class="image"/>');
-
             this.load = _load;
             this.remove = _remove;
             this.resize = _resize;
+
+            _instances.push(_inst);
 
             /**
              * Set the SRC of the image element to the URL, returning a
@@ -124,11 +136,10 @@ window.App = window.App || {};
                     });
 
                     _ready.then(function(){
-
+                        _inst.url = _url();
                         setTimeout(function(){
                             _inst.$elem.attr('src', _inst.url);
                         }, delay);
-
                     });
                 });
             }
@@ -144,66 +155,19 @@ window.App = window.App || {};
                 _inst.$elem.height(size.h);
             }
 
+            function _url() {
+                var settings = _inst.config;
+                settings.version = _inst.data.cloud.version;
+                return $.cloudinary.url(_inst.data.cloud.public_id, settings);
+            }
+
             function _remove() {
-                console.log('Removing', _inst.id, _inst.name);
                 _inst.$elem.remove();
             }
 
-            _instances.push(this);
-
         }
 
 
-        function _buildUrl(opts) {
-
-            var mods = [];
-            opts = opts || {};
-
-            opts.crop ? mods.push('c_' + opts.crop) : '';
-            opts.width ? mods.push('w_' + opts.width) : '';
-            opts.height ? mods.push('h_' + opts.height) : '';
-
-            var url = _self.data.cloud.url;
-            var mods = mods.join(',');
-            var str = '/upload/';
-
-            mods = (mods) ? mods + '/' : '';
-
-            var parts = url.split(str);
-            var out = [parts[0], str, mods, parts[1]].join('');
-
-            return out;
-
-        }
-
-
-        function _hasAllData() {
-            var d = _self.data;
-            return d.cloud &&
-                   d.cloud.eager &&
-                   d.cloud.eager.length > 0 &&
-                   d.cloud.eager[0].url;
-        }
-
-
-        function _setSizes() {
-            _instances.forEach(function(instance){
-                instance.resize();
-            });
-        }
-
-
-        function _dimensions(width) {
-            width = width || _self.data.local.width;
-            var w = parseInt(_self.data.local.width || 1, 10);
-            var h = parseInt(_self.data.local.height || 1, 10);
-            var r = h / w;
-            return {
-                w: parseInt(width, 10),
-                h: parseInt(Math.round(width * r), 10),
-                r: r
-            }
-        }
 
     }
 

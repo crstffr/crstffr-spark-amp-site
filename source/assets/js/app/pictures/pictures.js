@@ -22,7 +22,7 @@ window.App = window.App || {};
         var _config = $.extend({}, config, {
              app: {
                 load: {
-                    delay: 80
+                    delay: 50
                 },
                 elements: {
                     menu: 'nav.menu',
@@ -53,6 +53,10 @@ window.App = window.App || {};
             _view = App.View.create(_config.app.elements.view);
             _overlay = App.Overlay.create(_config.app.elements.overlay);
 
+            $.cloudinary.config(_config.cloud);
+
+            _view.isBusy(); // Start the loader bar
+
             // Build the Menu from data in Firebase
 
             _ready = new RSVP.Promise(function(resolve, reject){
@@ -78,16 +82,7 @@ window.App = window.App || {};
 
                     _view.isBusy();
                     _menu.select(path);
-
-                    var child = _root.getChild(path);
-
-                    if (child instanceof App.Folder) {
-                        _view.filter(path).then(function(){
-                            _loadFolder(child);
-                        });
-                    } else if (child instanceof App.Image) {
-                        _loadImage(child);
-                    }
+                    _loadChild(path);
 
                 });
 
@@ -106,14 +101,19 @@ window.App = window.App || {};
         function _loadChild(path) {
 
             var child = _root.getChild(path);
+
             if (child instanceof App.Folder) {
-                _loadFolder(child);
+
+                _view.filter(path).then(function(){
+                    _bindFolder(child);
+                    _loadFolder(child);
+                });
+
             } else if (child instanceof App.Image) {
+
                 _loadImage(child);
+
             }
-
-
-
         }
 
 
@@ -129,36 +129,21 @@ window.App = window.App || {};
 
         }
 
-
         /**
-         * Load a folder full of images and register event handlers for when
-         * images are added or removed.
+         * Register handlers for when images are added or removed
+         * from a given folder.
          *
          * @param folder
          * @private
          */
-        function _loadFolder(folder) {
+        function _bindFolder(folder) {
 
-            _overlay.close();
-
-            console.log('Load Folder', folder);
-
-            if (!folder || !folder.id || !folder.count.images || folder.loaded) {
-                _view.isDone();
-                return;
-            }
-
-            var delay = 0;
-            var promises = [];
-            var increment = 1 / folder.count.images;
-
-            console.log('Loading %d Images', folder.count.images);
+            if (folder.bound) { return; }
 
             // Register an event handler for this folder to
             // remove the thumbnail for any removed images.
 
-            folder.onImageRemoved(function(image){
-                console.log('IMAGE REMOVED', image);
+            folder.onImageRemoved(function(image) {
                 var thumb = image.getInstance('thumb');
                 if (thumb) {
                     _view.remove(thumb);
@@ -172,20 +157,66 @@ window.App = window.App || {};
             // pop-in effect of newly added images.
 
             folder.onImageAdded(function(image){
-                console.log('IMAGE ADDED', image);
+
+                folder.loading++;
                 _view.isBusy();
+
                 _loadThumb(image).then(function(){
                     _view.relayout();
                     _view.isDone();
+                    folder.loading--;
                 });
             });
+
+            folder.bound = true;
+
+        }
+
+
+
+        /**
+         * Load a folder full of images and register event handlers for when
+         * images are added or removed.
+         *
+         * @param folder
+         * @private
+         */
+        function _loadFolder(folder) {
+
+            _overlay.close();
+
+            if (!folder instanceof App.Folder) {
+                throw 'Cannot load folder, instance is not a Folder object';
+            }
+
+            if (folder.loaded && folder.loading === 0) {
+                console.log('Folder loaded', folder.id);
+                _view.isDone();
+                return;
+            }
+
+            if (folder.loading > 0) {
+                console.log('Folder loading', folder.id);
+                _view.isBusy();
+                return;
+            }
+
+            var delay = 0;
+            var promises = [];
+            folder.loading = 0;
+
+            console.log('Load Folder', folder.id, folder);
 
             // Loop over each of the image objects in the folder
             // and load them with a small delay.  When an image
             // is loaded, it increments the loader bar by a
             // a measured amount relevant to the total
 
+            var increment = 1 / (folder.count.images || 1);
+
             folder.getImages().forEach(function(image) {
+
+                folder.loading++;
 
                 var promise = _loadThumb(image, delay);
 
@@ -195,6 +226,7 @@ window.App = window.App || {};
 
                 promise.then(function(){
                     _view.isWorking(increment);
+                    folder.loading--;
                 });
 
                 // Add this image to our stack of promises.
@@ -239,10 +271,10 @@ window.App = window.App || {};
                 return;
             }
 
-            var opts = config.image.sizes.thumb;
-            var thumb = new image.instance('thumb', opts);
+            var thumb = new image.instance('thumb');
 
             thumb.resize();
+
             _view.append(thumb);
 
             return thumb.load(delay);

@@ -21,13 +21,6 @@ window.App = window.App || {};
             $overlay.hide();
         }
 
-        function _size() {
-            return {
-                w: $wrapper.width(),
-                h: $wrapper.height()
-            }
-        }
-
         function _placeImage(image) {
 
             return new RSVP.Promise(function(resolve){
@@ -38,13 +31,8 @@ window.App = window.App || {};
                 }
 
                 $wrapper.empty();
-                var size = _size();
 
-                imginst = new image.instance('bigger', {
-                    crop: 'fit',
-                    width: Math.ceil(size.w),
-                    height: Math.ceil(size.h)
-                });
+                imginst = new image.instance('med');
 
                 $wrapper.append(imginst.$elem);
 

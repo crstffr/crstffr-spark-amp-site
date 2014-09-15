@@ -13,8 +13,8 @@ module.exports = function(file) {
     var img = this;
     this.file = file;
     this.data = _getLocalData();
-    this.exists = _exists(file);
     this.isdir = _isDir(file);
+    this.exists = _exists(file);
     this.valid = _isValid(file);
     this.node = _data.node(img.data.id);
     if (!this.valid) { return this; }
@@ -28,14 +28,16 @@ module.exports = function(file) {
 
         logger.info('%s - UPLOADING IMAGE...', img.data.id);
 
-        _cloud.upload(img).then(function(response) {
+        return _cloud.upload(img).then(function(response) {
 
             logger.info('%s - UPLOAD COMPLETE', img.data.id);
             img.node.update({cloud: response});
 
         }).catch(function(e) {
+
             logger.error('%s - UPLOAD ERROR (%s)', img.data.id, e.message || e);
             img.node.remove();
+
         });
     };
 
@@ -44,7 +46,7 @@ module.exports = function(file) {
      */
     this.saveData = function() {
         img.node.update({local: img.data});
-        easyimg.info(img.file).then(function(info) {
+        return easyimg.info(img.file).then(function(info) {
             img.node.update({local: extend({}, img.data, info)});
         });
     };
@@ -66,7 +68,7 @@ module.exports = function(file) {
 
         logger.info('%s - REMOVING IMAGE...', img.data.id);
 
-        _cloud.remove(img.data.cid).then(function(results){
+        return _cloud.remove(img.data.cid).then(function(results){
 
             img.node.remove();
             logger.info('%s - REMOVE COMPLETE', img.data.id);
@@ -97,9 +99,8 @@ module.exports = function(file) {
                 time = _getModifiedDate(img.file);
             }
 
-            id = dir + base;
-            id = id.replace(/[^a-zA-Z0-9\/]/g,'-');
-            id = id.replace('&', 'and');
+            dir = _cleanFilename(dir);
+            id  = _cleanFilename(dir + base);
             cid = config.sitename + '/' + id;
 
         } catch(e) {
@@ -120,6 +121,9 @@ module.exports = function(file) {
 
     }
 
+    function _cleanFilename(value) {
+        return value.replace(/[^a-zA-Z0-9\/]/g,'-').replace('&', '-and-');
+    }
 
     /**
      * Checks file extension against the config values
