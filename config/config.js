@@ -5,14 +5,14 @@
         sitename: 'smartamp',
 
         cloud: {
-            cloud_name: 'brace-images',
-            api_key: '787328258491676',
+            cloud_name: 'dm5o5x9lb',
+            api_key: '848686932554623',
             cdn_subdomain: true,
             concurrent_uploads: 2
         },
 
         firebase: {
-            root: 'https://brace-images.firebaseio.com/'
+            root: 'https://realtime-images.firebaseio.com/'
         },
 
         local: {

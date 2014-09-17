@@ -108,7 +108,7 @@ module.exports = function (grunt) {
                 files: ['source/assets/img/**/*'],
                 tasks: ['copy:img']
             },
-            img: {
+            vendor: {
                 files: ['source/assets/vendor/**/*'],
                 tasks: ['copy:vendor']
             }
